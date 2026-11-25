@@ -1,0 +1,1704 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#f6f4ef" />
+  <!-- iPhone 加入主畫面專屬 Web App 設定 -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="京名6日旅" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%23b4332b'/><text x='90' y='112' font-size='84' text-anchor='middle' fill='%23fdfbf7' font-family='sans-serif' font-weight='bold'>旅</text></svg>" />
+  <title>京都＋名古屋 6 日行程（12/31–1/5）</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f6f4ef;
+      --paper: #fdfbf7;
+      --card: #ffffff;
+      --ink: #2a2622;
+      --muted: #6e675f;
+      --line: #e4ddd1;
+      --accent: #b4332b;      /* 朱紅 */
+      --accent-soft: #f9ebe9;
+      --accent2: #1f5f8b;     /* 靛藍 */
+      --accent2-soft: #e9f2f8;
+      --gold: #a67c2e;
+      --gold-soft: #f7f1e3;
+      --shadow: 0 4px 16px -4px rgba(42, 38, 34, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg);
+      color: var(--ink);
+      font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    .font-serif-tc {
+      font-family: 'Noto Serif TC', serif;
+    }
+
+    /* 隱形橫向捲動列 */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* 日系和紙微紋理背景 */
+    .washi-bg {
+      background-color: var(--bg);
+      background-image: radial-gradient(rgba(180, 51, 43, 0.04) 1px, transparent 0),
+                        radial-gradient(rgba(31, 95, 139, 0.03) 1px, transparent 0);
+      background-size: 28px 28px;
+      background-position: 0 0, 14px 14px;
+    }
+
+    /* 地圖標記高亮脈衝動畫 */
+    @keyframes markerPulse {
+      0% {
+        transform: scale(1);
+        opacity: 0.85;
+      }
+      70% {
+        transform: scale(2.4);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(2.4);
+        opacity: 0;
+      }
+    }
+
+    .pulse-ring {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: markerPulse 1.5s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+    }
+
+    @keyframes subtleBob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+    }
+
+    .marker-active {
+      animation: subtleBob 1.2s ease-in-out infinite;
+    }
+
+    /* 卡片與互動回饋 */
+    .journal-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .timeline-row {
+      transition: background-color 0.2s ease, transform 0.15s ease, border-color 0.2s ease;
+    }
+
+    .timeline-row.is-clickable:hover {
+      background-color: #faf7f2;
+    }
+
+    .timeline-row.is-selected {
+      background-color: var(--accent-soft);
+      border-color: rgba(180, 51, 43, 0.45);
+    }
+
+    /* 安全區域支援 */
+    .safe-top {
+      padding-top: max(0.75rem, env(safe-area-inset-top));
+    }
+    .safe-bottom {
+      padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+    }
+
+    /* 自訂核取方塊 */
+    .custom-check {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #c8bfb0;
+      border-radius: 6px;
+      background: #fff;
+      cursor: pointer;
+      position: relative;
+      flex-shrink: 0;
+      transition: all 0.15s ease;
+    }
+    .custom-check:checked {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    .custom-check:checked::after {
+      content: '';
+      position: absolute;
+      left: 5px;
+      top: 1.5px;
+      width: 6px;
+      height: 11px;
+      border: solid #fff;
+      border-width: 0 2.2px 2.2px 0;
+      transform: rotate(45deg);
+    }
+
+    /* 列印樣式優化 */
+    @media print {
+      .no-print { display: none !important; }
+      body { background: #fff !important; }
+      .journal-card { box-shadow: none !important; border: 1px solid #ccc !important; }
+    }
+  </style>
+</head>
+<body class="washi-bg min-h-screen flex flex-col">
+
+  <!-- 專屬通行碼鎖定畫面（輸入一次後自動記住） -->
+  <div id="passcodeGate" class="fixed inset-0 z-50 washi-bg flex items-center justify-center p-4">
+    <div class="journal-card w-full max-w-sm p-6 text-center shadow-xl border border-[#e4ddd1]">
+      <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-[#b4332b] text-[#fdfbf7] flex items-center justify-center shadow-md">
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        </svg>
+      </div>
+      <span class="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#f9ebe9] text-[#b4332b] mb-1.5">
+        私人旅手帳保護
+      </span>
+      <h2 class="font-serif-tc text-xl font-bold text-[#2a2622]">京都＋名古屋 6 日行程</h2>
+      <p class="text-xs text-[#6e675f] mt-1 mb-5">請輸入專屬通行密碼以檢視完整行程與住宿資訊</p>
+
+      <form id="passcodeForm" class="space-y-3">
+        <input
+          id="passcodeInput"
+          type="password"
+          inputmode="numeric"
+          maxlength="12"
+          placeholder="請輸入通行密碼"
+          autocomplete="off"
+          class="w-full px-4 py-3 text-center text-lg font-bold tracking-[0.25em] rounded-xl border border-[#d4cbbd] bg-[#fdfbf7] text-[#2a2622] focus:outline-none focus:border-[#b4332b] focus:ring-2 focus:ring-[#b4332b]/20"
+        />
+        <p id="passcodeError" class="text-xs font-bold text-[#b4332b] hidden">密碼不正確，請再試一次</p>
+        <button
+          type="submit"
+          class="w-full py-3 rounded-xl bg-[#b4332b] text-white font-bold text-sm hover:bg-[#992922] active:scale-[0.99] transition shadow-sm"
+        >
+          解鎖行程表
+        </button>
+      </form>
+      <p class="text-[11px] text-[#8a8279] mt-4">解鎖一次後，本機裝置將自動記住登入狀態</p>
+    </div>
+  </div>
+
+  <!-- 頂部導覽與分頁列 -->
+  <header class="sticky top-0 z-40 bg-[#fdfbf7]/95 backdrop-blur-md border-b border-[#e4ddd1] safe-top no-print">
+    <div class="max-w-4xl mx-auto px-4 pt-2 pb-1.5 flex items-center justify-between gap-2">
+      <div class="min-w-0">
+        <div class="flex items-center gap-2">
+          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold tracking-wider bg-[#b4332b] text-white">
+            2026–2027 跨年旅手帳
+          </span>
+          <span class="text-xs text-[#6e675f] font-medium hidden sm:inline">6 日自由行・關西至中部</span>
+        </div>
+        <h1 class="font-serif-tc text-lg sm:text-xl font-bold text-[#2a2622] truncate mt-0.5">
+          京都＋名古屋 6 日行程（12/31–1/5）
+        </h1>
+      </div>
+
+      <div class="flex items-center gap-2 shrink-0">
+        <button
+          id="shareBtn"
+          type="button"
+          class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-bold bg-[#1f5f8b] text-white hover:bg-[#184b6e] active:scale-95 transition shadow-sm"
+          title="分享或複製行程連結"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+          </svg>
+          <span>分享行程</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 分頁切換列 -->
+    <nav id="tabBar" aria-label="行程分頁" class="max-w-4xl mx-auto px-3 pb-2.5 pt-1 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+      <!-- 由 JS 動態生成 -->
+    </nav>
+  </header>
+
+  <!-- 提示訊息 Toast -->
+  <div id="toast" role="status" aria-live="polite" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-opacity duration-200">
+    <div id="toastText" class="px-4 py-2.5 rounded-full bg-[#2a2622] text-[#fdfbf7] text-xs sm:text-sm font-medium shadow-lg whitespace-nowrap">
+      已複製行程連結
+    </div>
+  </div>
+
+  <!-- 主內容區 -->
+  <main id="appMain" class="flex-1 max-w-4xl w-full mx-auto px-3 sm:px-4 py-4 sm:py-6 safe-bottom">
+    <!-- 由 JS 動態渲染 -->
+  </main>
+
+  <!-- 頁尾 -->
+  <footer class="max-w-4xl w-full mx-auto px-4 pb-8 pt-2 text-center text-xs text-[#6e675f] safe-bottom">
+    <p>京都＋名古屋 6 日跨年旅手帳・點擊時間軸編號可與互動路線圖連動定位</p>
+  </footer>
+
+  <script>
+    /**
+     * ============================================================================
+     * 0. 通行密碼設定（可隨時在此修改密碼）
+     * ============================================================================
+     */
+    const TRIP_PASSCODE = "04140705"; 
+    const AUTH_STORAGE_KEY = "kyoto_nagoya_trip_unlocked_v1";
+
+    function initPasscodeGate() {
+      const gate = document.getElementById("passcodeGate");
+      const form = document.getElementById("passcodeForm");
+      const input = document.getElementById("passcodeInput");
+      const err = document.getElementById("passcodeError");
+
+      // 若本機已解鎖過，直接隱藏鎖定畫面
+      try {
+        if (localStorage.getItem(AUTH_STORAGE_KEY) === TRIP_PASSCODE) {
+          gate.classList.add("hidden");
+          return;
+        }
+      } catch (e) {}
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const val = (input.value || "").trim();
+        if (val === TRIP_PASSCODE) {
+          try {
+            localStorage.setItem(AUTH_STORAGE_KEY, TRIP_PASSCODE);
+          } catch (e) {}
+          gate.classList.add("hidden");
+          err.classList.add("hidden");
+          showToast("歡迎！已解鎖行程表");
+        } else {
+          err.classList.remove("hidden");
+          input.value = "";
+          input.focus();
+        }
+      });
+    }
+
+    /**
+     * ============================================================================
+     * 1. 完整行程資料庫（所有地點座標、每日路線、已預訂住宿、航班、警告與已捨棄景點）
+     * ============================================================================
+     */
+
+    // 地點資料庫 S（經緯度與 Google Maps 連結資訊）
+    const S = {
+      // 神戶 / 關西移動
+      ukb: {
+        name: "神戶機場（UKB）",
+        en: "Kobe Airport",
+        lat: 34.6328,
+        lng: 135.2239,
+        area: "神戶",
+        note: "星宇 JX834 11:45 抵達；搭 Port Liner 至三宮站轉 JR 新快速直達京都（約 52 分）",
+        gmap: "https://www.google.com/maps/search/?api=1&query=Kobe+Airport"
+      },
+      sannomiya: {
+        name: "三宮站（JR / Port Liner）",
+        en: "Sannomiya Station",
+        lat: 34.6944,
+        lng: 135.1955,
+        area: "神戶",
+        note: "Port Liner 終點站，轉乘 JR 神戶線新快速直達京都站",
+        gmap: "https://www.google.com/maps/search/?api=1&query=Sannomiya+Station"
+      },
+
+      // 京都區域
+      kyotoHotel: {
+        name: "VIA INN PRIME 京都站八條口（已預訂）",
+        en: "VIA INN PRIME Kyotoeki Hachijoguchi",
+        lat: 34.9835,
+        lng: 135.7595,
+        area: "京都車站八條口",
+        isHotel: true,
+        note: "已預訂豪華雙人房 26㎡（浴廁完全分離＋大浴缸），距離京都車站八條口步行 2–3 分鐘，寄放行李與 Day 3 搭東海道新幹線極順路",
+        gmap: "https://www.google.com/maps/search/?api=1&query=VIA+INN+PRIME+Kyotoeki+Hachijoguchi"
+      },
+      kiyomizu: {
+        name: "清水寺（音羽山）",
+        en: "Kiyomizu-dera",
+        lat: 34.9949,
+        lng: 135.7850,
+        area: "東山",
+        note: "世界遺產清水舞台，眺望京都市景；12/31 傍晚參拜（通常 18:00 閉門，建議 15:30 前抵達）",
+        gmap: "https://www.google.com/maps/search/?api=1&query=Kiyomizu-dera+Kyoto"
+      },
+      sannenzaka: {
+        name: "三年坂・二年坂（産寧坂）",
+        en: "Sannenzaka & Ninenzaka",
+        lat: 34.9966,
+        lng: 135.7808,
+        area: "東山",
+        note: "石疊坡道與町家老街，沿途可逛伴手禮、抹茶甜點與吉卜力橡子共和國",
+        gmap: "https://www.google.com/maps/search/?api=1&query=Sannenzaka+Kyoto"
+      },
+      yasakaPagoda: {
+        name: "法觀寺・八坂之塔",
+        en: "Hokan-ji (Yasaka Pagoda)",
+        lat: 34.9986,
+        lng: 135.7793,
+        area: "東山",
+        note: "東山經典五重塔街景拍照點，黃昏點燈時分最具古都氛圍",
+        gmap: "https://www.google.com/maps/search/?api=1&query=Hokan-ji+Temple+Kyoto"
+      },
+      hanamikoji: {
+        name: "花見小路・祇園白川",
+        en: "Hanamikoji Street & Gion",
+        lat: 35.0034,
+        lng: 135.7748,
+        area: "祇園",
+        note: "茶屋街風情，晚餐可於祇園或河原町周邊享用京料理、拉麵或壽喜燒（跨年夜務必提前訂位）",
+        gmap: "https://www.google.com/maps/search/?api=1&query=Hanamikoji+Street+Kyoto"
+      },
+      chionin: {
+        name: "知恩院（除夕撞鐘）",
+        en: "Chion-in Temple",
+        lat: 35.0061,
+        lng: 135.7838,
+        area: "東山",
+        note: "日本最大級大梵鐘除夜之鐘（17 名僧侶齊力撞鐘 108 響，約 22:40 開始；22:30 左右即停止排隊入場，建議 21:45–22:00 先來排隊）",
+        gmap: "https://www.google.com/maps/search/?api=1&query=Chion-in+Temple+Kyoto"
+      },
+      yasakaShrine: {
+        name: "八坂神社（祇園社・白朮祭）",
+        en: "Yasaka Shrine",
+        lat: 35.0037,
+        lng: 135.7785,
+        area: "祇園",
+        note: "24 小時開放！聽完知恩院撞鐘後步行 8 分鐘即達，體驗除夕夜「白朮祭（をけら詣り）」點火繩祈福與跨年倒數",
+        gmap: "https://www.google.com/maps/search/?api=1&query=Yasaka+Shrine+Kyoto"
+      },
+
+      // Day 2 京都西北（嵐山～龍安寺～金閣寺）
+      arashiyamaSta: {
+        name: "JR 嵯峨嵐山站 / 嵐電嵐山",
+        en: "Saga-Arashiyama Station",
+        lat: 35.0185,
+        lng: 135.6815,
+        area: "嵐山",
+        note: "從京都站搭 JR 嵯峨野線約 17 分鐘直達，出站往渡月橋方向步行約 8 分鐘先抵天龍寺正門",
+        gmap: "https://www.google.com/maps/search/?api=1&query=Saga-Arashiyama+Station"
+      },
+      tenryuji: {
+        name: "天龍寺（曹源池庭園）",
+        en: "Tenryu-ji Temple",
+        lat: 35.0156,
+        lng: 135.6738,
+        area: "嵐山",
+        note: "世界遺產，借景嵐山與龜山的池泉迴遊式庭園；參觀完直接由「天龍寺北門」穿出即可無縫銜接竹林小徑",
+        gmap: "https://www.google.com/maps/search/?api=1&query=Tenryu-ji+Temple+Kyoto"
+      },
+      bambooForest: {
+        name: "嵐山竹林小徑・野宮神社",
+        en: "Arashiyama Bamboo Grove",
+        lat: 35.0170,
+        lng: 135.6713,
+        area: "嵐山",
+        note: "由天龍寺北門走出即達竹林隧道，順遊黑木鳥居的野宮神社祈求新年好運，再往渡月橋前進不走回頭路",
+        gmap: "https://www.google.com/maps/search/?api=1&query=Arashiyama+Bamboo+Grove"
+      },
+      togetsukyo: {
+        name: "渡月橋・嵐山大街午餐",
+        en: "Togetsukyo Bridge",
+        lat: 35.0129,
+        lng: 135.6777,
+        area: "嵐山",
+        note: "橫跨桂川的嵐山象徵，周邊有湯豆腐、蕎麥麵、% Arabica 咖啡與中村屋可樂餅",
+        gmap: "https://www.google.com/maps/search/?api=1&query=Togetsukyo+Bridge+Kyoto"
+      },
+      ryoanji: {
+        name: "龍安寺（枯山水石庭）",
+        en: "Ryoan-ji Temple",
+        lat: 35.0345,
+        lng: 135.7183,
+        area: "衣掛之路",
+        note: "搭嵐電從嵐山站至龍安寺站步行約 7 分；著名 15 顆石頭枯山水庭園與「吾唯知足」蹲踞",
+        gmap: "https://www.google.com/maps/search/?api=1&query=Ryoan-ji+Temple+Kyoto"
+      },
+      kinkakuji: {
+        name: "金閣寺（鹿苑寺）",
+        en: "Kinkaku-ji (Golden Pavilion)",
+        lat: 35.0394,
+        lng: 135.7292,
+        area: "北山",
+        note: "從龍安寺步行約 18 分或搭市巴士 59 號 2 站即達；午後陽光斜照鏡湖池與金箔舍利殿最耀眼",
+        gmap: "https://www.google.com/maps/search/?api=1&query=Kinkaku-ji+Kyoto"
+      },
+      kyotoPorta: {
+        name: "京都車站 Porta / 伊勢丹晚餐",
+        en: "Kyoto Station Dining",
+        lat: 34.9866,
+        lng: 135.7592,
+        area: "京都車站",
+        note: "元旦（1/1）百貨與地下街部分營業，建議先確認營業樓層或選擇拉麵小路",
+        gmap: "https://www.google.com/maps/search/?api=1&query=Kyoto+Ramen+Koji"
+      },
+
+      // Day 3–5 名古屋住宿與轉乘樞紐
+      nagoyaHotel: {
+        name: "名古屋錦日航都市飯店（已預訂）",
+        en: "Hotel JAL City Nagoya Nishiki",
+        lat: 35.1695,
+        lng: 136.8936,
+        area: "伏見・錦",
+        isHotel: true,
+        note: "已預訂連住 3 晚（22㎡ 以上寬敞房型＋浴廁完全分離）；距離地鐵「伏見站」與「國際中心站」步行約 7 分鐘，帶大行李往返名古屋站搭計程車約 5 分鐘（約 ¥1,000）最省力",
+        gmap: "https://www.google.com/maps/search/?api=1&query=Hotel+JAL+City+Nagoya+Nishiki"
+      },
+      nagoyaSta: {
+        name: "名古屋車站（JR / 名鐵 / 青波線樞紐）",
+        en: "Nagoya Station",
+        lat: 35.1709,
+        lng: 136.8815,
+        area: "名站",
+        note: "新幹線抵達、轉乘名鐵往清洲城／熱田神宮／中部機場，以及青波線往樂高樂園的核心交通樞紐",
+        gmap: "https://www.google.com/maps/search/?api=1&query=Nagoya+Station"
+      },
+      kiyosuCastle: {
+        name: "清洲城（織田信長居城）",
+        en: "Kiyosu Castle",
+        lat: 35.2165,
+        lng: 136.8435,
+        area: "清須市",
+        note: "名鐵名古屋本線至「新清洲站」步行約 15 分；桶狹間之戰出發地，朱紅大手橋與天守閣極具氣勢（1/2 新年開館至 15:00）",
+        gmap: "https://www.google.com/maps/search/?api=1&query=Kiyosu+Castle"
+      },
+      nagoyaCastle: {
+        name: "名古屋城・金鯱橫丁",
+        en: "Nagoya Castle & Kinshachi Yokocho",
+        lat: 35.1856,
+        lng: 136.8997,
+        area: "名古屋城",
+        note: "地鐵名城線「名古屋城站」7 號出口；必看本丸御殿金碧輝煌障壁畫，順遊金鯱橫丁品嚐味噌豬排或鰻魚飯",
+        gmap: "https://www.google.com/maps/search/?api=1&query=Nagoya+Castle"
+      },
+      esca: {
+        name: "伏見／榮／名站周邊晚餐",
+        en: "Fushimi & Nagoya Dining",
+        lat: 35.1691,
+        lng: 136.8975,
+        area: "伏見・榮",
+        note: "辦理入住後可於飯店周邊（伏見、榮或 ESCA 地下街）大啖矢場味噌豬排、世界的小山將手羽先或山本屋總本家味噌煮烏龍麵",
+        gmap: "https://www.google.com/maps/search/?api=1&query=Fushimi+Station+Nagoya+Dinner"
+      },
+
+      // Day 4 熱田神宮 ➔ 大須 ➔ 榮
+      atsutaJingu: {
+        name: "熱田神宮（新年初詣）",
+        en: "Atsuta Jingu Shrine",
+        lat: 35.1281,
+        lng: 136.9085,
+        area: "熱田",
+        note: "供奉三神器之一「草薙神劍」，1/3 仍為新年初詣期間，森林參道莊嚴且屋台攤販熱鬧",
+        gmap: "https://www.google.com/maps/search/?api=1&query=Atsuta+Jingu+Nagoya"
+      },
+      houraiken: {
+        name: "あつた蓬萊軒 神宮店（鰻魚飯三吃）",
+        en: "Atsuta Horaiken Jingu",
+        lat: 35.1257,
+        lng: 136.9073,
+        area: "熱田",
+        note: "名古屋必吃名店！建議 10:15 前先到現場登記候位號碼牌，依指定時間回來入座",
+        gmap: "https://www.google.com/maps/search/?api=1&query=Atsuta+Horaiken+Jingu"
+      },
+      osuKannon: {
+        name: "大須觀音・大須商店街",
+        en: "Osu Kannon & Shopping District",
+        lat: 35.1597,
+        lng: 136.8996,
+        area: "大須",
+        note: "地鐵鶴舞線「大須觀音站」；參拜大須觀音後逛 400 年歷史商店街，炸雞、鯛魚燒、古著雜貨雲集",
+        gmap: "https://www.google.com/maps/search/?api=1&query=Osu+Kannon+Nagoya"
+      },
+      hisayaOdori: {
+        name: "久屋大通公園・中部電力 MIRAI TOWER",
+        en: "Chubu Electric Power MIRAI TOWER",
+        lat: 35.1724,
+        lng: 136.9083,
+        area: "榮",
+        note: "日本最古老集約電波塔，水盤倒影與夜間點燈超好拍，PARK 商場有眾多咖啡與選物店",
+        gmap: "https://www.google.com/maps/search/?api=1&query=Chubu+Electric+Power+MIRAI+TOWER"
+      },
+      oasis21: {
+        name: "綠洲 21（Oasis 21・水之宇宙船）",
+        en: "Oasis 21",
+        lat: 35.1707,
+        lng: 136.9096,
+        area: "榮",
+        note: "頂樓玻璃屋頂水池可免費散步賞夜景，與電視塔同框是名古屋經典地標",
+        gmap: "https://www.google.com/maps/search/?api=1&query=Oasis+21+Nagoya"
+      },
+
+      // Day 5 樂高樂園＋磁浮鐵道館
+      legoland: {
+        name: "日本樂高樂園（LEGOLAND Japan）",
+        en: "LEGOLAND Japan Resort",
+        lat: 35.0507,
+        lng: 136.8436,
+        area: "金城埠頭",
+        note: "搭乘青波線（Aonami Line）至終點「金城埠頭站」步行 5 分；建議 10:00 開園前抵達，優先玩潛水艇與雲霄飛車",
+        gmap: "https://www.google.com/maps/search/?api=1&query=LEGOLAND+Japan"
+      },
+      makersPier: {
+        name: "Maker's Pier 商業設施",
+        en: "Maker's Pier",
+        lat: 35.0523,
+        lng: 136.8453,
+        area: "金城埠頭",
+        note: "緊鄰樂高樂園的開放式餐飲與手作體驗區，適合午餐與休憩",
+        gmap: "https://www.google.com/maps/search/?api=1&query=Makers+Pier+Nagoya"
+      },
+      scmaglev: {
+        name: "磁浮・鐵道館（SCMAGLEV and Railway Park）",
+        en: "SCMAGLEV and Railway Park",
+        lat: 35.0488,
+        lng: 136.8511,
+        area: "金城埠頭",
+        note: "JR 東海營運！展出歷代新幹線、蒸汽火車與超導磁浮列車，還有超大型鐵道模型與模擬駕駛體驗",
+        gmap: "https://www.google.com/maps/search/?api=1&query=SCMAGLEV+and+Railway+Park"
+      },
+      midlandSquare: {
+        name: "Midland Square / 名站夜景晚餐",
+        en: "Midland Square Nagoya",
+        lat: 35.1701,
+        lng: 136.8851,
+        area: "名站",
+        note: "名站正對面地標大樓，44–46 樓設有露天展望台 Sky Promenade，樓下餐廳選擇豐富",
+        gmap: "https://www.google.com/maps/search/?api=1&query=Midland+Square+Nagoya"
+      },
+
+      // Day 6 Toyota 紀念館 ➔ 返台
+      toyotaMuseum: {
+        name: "豐田產業技術紀念館",
+        en: "Toyota Commemorative Museum of Industry and Technology",
+        lat: 35.1825,
+        lng: 136.8763,
+        area: "榮生",
+        note: "名鐵名古屋本線「榮生站」步行 3 分（或從名站搭一站）；1/5 新年開館首日，纖維機械館與汽車館動態實演極精彩",
+        gmap: "https://www.google.com/maps/search/?api=1&query=Toyota+Commemorative+Museum+of+Industry+and+Technology"
+      },
+      noritakeGarden: {
+        name: "則武之森（Noritake Garden / AEON Mall）",
+        en: "Noritake Garden",
+        lat: 35.1795,
+        lng: 136.8819,
+        area: "名站北",
+        note: "距離豐田紀念館步行 6 分鐘，紅磚建築與 TSUTAYA BOOKSTORE 巨型書牆，順道回名站取行李",
+        gmap: "https://www.google.com/maps/search/?api=1&query=Noritake+Garden+Nagoya"
+      },
+      ngo: {
+        name: "中部國際機場（NGO・新特麗亞）",
+        en: "Chubu Centrair International Airport",
+        lat: 34.8584,
+        lng: 136.8054,
+        area: "常滑",
+        note: "名鐵 μ-SKY 特急從名鐵名古屋站僅 28 分鐘直達！星宇 JX839 15:05 起飛，建議 12:30 前抵達報到並逛機場",
+        gmap: "https://www.google.com/maps/search/?api=1&query=Chubu+Centrair+International+Airport"
+      }
+    };
+
+    // 航班資訊
+    const FLIGHTS = [
+      {
+        dir: "去程",
+        airline: "星宇航空 STARLUX",
+        code: "JX834",
+        date: "12/31（四）",
+        from: "桃園（TPE）",
+        to: "神戶（UKB）",
+        dep: "08:05",
+        arr: "11:45",
+        note: "抵達神戶機場後，搭 Port Liner 至三宮站轉 JR 新快速直達京都站（全程約 75–85 分鐘）"
+      },
+      {
+        dir: "回程",
+        airline: "星宇航空 STARLUX",
+        code: "JX839",
+        date: "1/5（二）",
+        from: "名古屋中部（NGO）",
+        to: "桃園（TPE）",
+        dep: "15:05",
+        arr: "17:40",
+        note: "12:00 前從名鐵名古屋搭 μ-SKY（28 分鐘）前往中部國際機場，預留 2.5 小時辦理報到與免稅採買"
+      }
+    ];
+
+    // 住宿資訊（僅宣告一次，包含京都與名古屋已預訂飯店）
+    const HOTELS = [
+      {
+        days: "Day 1 – Day 2（2 晚・已預訂）",
+        dates: "12/31（四）– 1/2（六）",
+        area: "VIA INN PRIME 京都站八條口（豪華雙人房 26㎡）",
+        desc: "已於 Booking 完成預訂！位於京都車站八條口步行 2–3 分鐘，26㎡ 寬敞房型且浴廁完全分離＋大浴缸，第一天寄放行李、第二天前往嵐山、第三天早上拉行李搭新幹線去名古屋都極為順暢。",
+        pointKey: "kyotoHotel"
+      },
+      {
+        days: "Day 3 – Day 5（3 晚・已預訂）",
+        dates: "1/2（六）– 1/5（二）",
+        area: "名古屋錦日航都市飯店（Hotel JAL City Nagoya Nishiki）",
+        desc: "已預訂連住 3 晚（22㎡ 以上寬敞房型＋浴廁完全分離）！距離地鐵「伏見站」與「國際中心站」步行約 7 分鐘，帶大行李往返名古屋車站建議搭計程車約 5 分鐘（車資約 ¥1,000）最省力。",
+        pointKey: "nagoyaHotel"
+      }
+    ];
+
+    // 每日完整行程資料 DAYS（僅宣告一次）
+    const DAYS = [
+      {
+        id: "day1",
+        tabLabel: "Day 1",
+        dateLabel: "12/31（四）",
+        title: "抵達・東山跨年",
+        subtitle: "神戶機場入境 ➔ VIA INN PRIME 京都站八條口寄放行李 ➔ 清水寺・三年坂・八坂之塔 ➔ 知恩院除夕撞鐘與八坂神社白朮祭跨年",
+        city: "神戶 → 京都",
+        routeUrl: "https://www.google.com/maps/dir/?api=1&origin=VIA+INN+PRIME+Kyotoeki+Hachijoguchi&destination=Yasaka+Shrine+Kyoto&waypoints=Kiyomizu-dera+Kyoto|Sannenzaka+Kyoto|Hokan-ji+Temple+Kyoto|Chion-in+Temple+Kyoto&travelmode=walking",
+        stops: ["kyotoHotel", "kiyomizu", "sannenzaka", "yasakaPagoda", "hanamikoji", "chionin", "yasakaShrine"],
+        detailMap: {
+          title: "局部放大：京都車站飯店 ～ 東山・知恩院・八坂神社跨年動線",
+          keys: ["kyotoHotel", "kiyomizu", "sannenzaka", "yasakaPagoda", "hanamikoji", "chionin", "yasakaShrine"],
+          centerLat: 34.9965,
+          centerLng: 135.7735,
+          spanLat: 0.028,
+          spanLng: 0.036
+        },
+        overviewMap: {
+          title: "廣域路線：神戶機場 ➔ 三宮 ➔ 京都車站飯店 ➔ 東山",
+          keys: ["ukb", "sannomiya", "kyotoHotel", "kiyomizu", "chionin", "yasakaShrine"],
+          centerLat: 34.84,
+          centerLng: 135.48,
+          spanLat: 0.50,
+          spanLng: 0.72
+        },
+        warns: [
+          "知恩院除夜之鐘（約 22:40 開始）在 22:30 左右常會關閉入口停止排隊，而八坂神社為 24 小時開放，因此務必「先去知恩院排隊聽撞鐘（建議 21:45–22:00 抵達），結束後再步行 8 分鐘至八坂神社參拜白朮祭跨年」。",
+          "12/31 傍晚起東山・祇園周邊實施大規模交通管制，公車會改道或停駛，回程請預留步行至京阪祇園四條站或地鐵東山站的時間。",
+          "日本除夕夜多數餐廳提早打烊或採預約制，12/31 晚餐強烈建議提前線上訂位；京都跨年夜氣溫常降至 0°C–3°C，排隊務必準備暖暖包與防風外套。"
+        ],
+        todos: [
+          { id: "d1-t1", text: "填寫 Visit Japan Web（入境審查與海關申報 QR Code 截圖）" },
+          { id: "d1-t2", text: "購買／綁定日本交通 IC 卡（ICOCA / Suica Apple Pay 加值）" },
+          { id: "d1-t3", text: "預訂 12/31 祇園或河原町周邊跨年晚餐餐廳" }
+        ],
+        timeline: [
+          { time: "11:45", title: "抵達神戶機場（UKB）", desc: "星宇 JX834 落地，辦理入境與提領行李（約 45–60 分鐘）。", point: "ukb", transit: "Port Liner（18 分）→ 三宮站轉 JR 新快速（52 分）" },
+          { time: "14:15", title: "抵達 VIA INN PRIME 京都站八條口寄放行李", desc: "至已預訂的 VIA INN PRIME 京都站八條口寄放行李，輕裝出發前往東山。", point: "kyotoHotel", transit: "市巴士 206 號或計程車（約 15–20 分）至五條坂" },
+          { time: "15:15", title: "清水寺參拜", desc: "趁日落前參拜音羽山清水寺，於清水舞台遠眺京都盆地暮色（留意 12/31 閉門時間約 18:00）。", point: "kiyomizu", transit: "步行下坡約 6 分鐘" },
+          { time: "16:30", title: "三年坂・二年坂・八坂之塔散步", desc: "漫步石板坡道町家老街，於法觀寺（八坂之塔）前捕捉藍調時刻經典街景。", point: "sannenzaka", transit: "沿寧寧之道步行約 12 分鐘" },
+          { time: "18:00", title: "花見小路・祇園晚餐", desc: "走訪古色古香的花見小路，並於已預約餐廳享用除夕晚餐（餐後可稍作休息保暖）。", point: "hanamikoji", transit: "步行約 10 分鐘前往知恩院排隊入口" },
+          { time: "21:45", title: "知恩院除夜之鐘（先排隊觀禮撞鐘）", desc: "提早於 22:30 關閉入口前卡位！現場觀禮 17 名僧侶齊力敲響日本最大級大梵鐘 108 響。", point: "chionin", transit: "步行穿過圓山公園約 8 分鐘至八坂神社" },
+          { time: "23:15", title: "八坂神社「白朮祭」跨年祈福", desc: "24 小時開放！體驗旋轉祈福火繩「白朮詣」與熱鬧屋台市集，迎接 2027 新年第一刻後返回飯店。", point: "yasakaShrine", transit: "步行至京阪祇園四條站或搭計程車回京都站" }
+        ]
+      },
+      {
+        id: "day2",
+        tabLabel: "Day 2",
+        dateLabel: "1/1（五）",
+        title: "嵐山 ➔ 龍安寺 ➔ 金閣寺",
+        subtitle: "元旦清晨天龍寺（北門接竹林小徑）➔ 野宮神社與渡月橋午餐 ➔ 嵐電前往龍安寺枯山水 ➔ 午後金色閃耀金閣寺",
+        city: "京都西北",
+        routeUrl: "https://www.google.com/maps/dir/?api=1&origin=Saga-Arashiyama+Station&destination=Kinkaku-ji+Kyoto&waypoints=Tenryu-ji+Temple+Kyoto|Arashiyama+Bamboo+Grove|Togetsukyo+Bridge+Kyoto|Ryoan-ji+Temple+Kyoto&travelmode=transit",
+        stops: ["kyotoHotel", "arashiyamaSta", "tenryuji", "bambooForest", "togetsukyo", "ryoanji", "kinkakuji"],
+        detailMap: {
+          title: "局部放大：嵐山（天龍寺 ➔ 北門接竹林 ➔ 渡月橋）不回頭動線",
+          keys: ["arashiyamaSta", "tenryuji", "bambooForest", "togetsukyo"],
+          centerLat: 35.0160,
+          centerLng: 135.6762,
+          spanLat: 0.012,
+          spanLng: 0.018
+        },
+        overviewMap: {
+          title: "廣域路線：京都車站飯店 ➔ 嵐山 ➔ 龍安寺 ➔ 金閣寺",
+          keys: ["kyotoHotel", "arashiyamaSta", "togetsukyo", "ryoanji", "kinkakuji"],
+          centerLat: 35.012,
+          centerLng: 135.716,
+          spanLat: 0.068,
+          spanLng: 0.105
+        },
+        warns: [
+          "1/1 元旦為日本新年第一天，京都市區部分個人小店與百貨休館，但嵐山主要寺社、龍安寺、金閣寺及大型餐飲街均正常開放。",
+          "從嵐山前往龍安寺搭乘「嵐電（京福電鐵）」最順暢：嵐山站 → 帷子之辻站轉北野線 → 龍安寺站，沿途充滿懷舊路面電車風情。",
+          "金閣寺最後入場時間通常為 17:00，建議 15:30 前抵達，才能拍到夕陽斜照金箔倒映鏡湖池的絕美畫面。"
+        ],
+        todos: [
+          { id: "d2-t1", text: "確認元旦當日京都車站周邊營業餐廳（如拉麵小路、Porta 美食街）" }
+        ],
+        timeline: [
+          { time: "08:15", title: "京都車站出發前往嵐山", desc: "搭乘 JR 嵯峨野線（山陰本線）普通或快速列車，約 17 分鐘直達嵯峨嵐山站。", point: "arashiyamaSta", transit: "出站往渡月橋方向步行約 8 分鐘先抵天龍寺正門" },
+          { time: "08:45", title: "天龍寺（曹源池庭園）", desc: "正門進入參觀夢窗疏石設計的借景庭園，逛完直接從「天龍寺北門」穿出接竹林小徑，動線最順不走回頭路。", point: "tenryuji", transit: "從天龍寺北門穿出即達竹林小徑" },
+          { time: "09:50", title: "嵐山竹林小徑・野宮神社", desc: "漫步高聳翠綠竹林隧道，順道參拜黑木鳥居的野宮神社祈求新年良緣與好運。", point: "bambooForest", transit: "沿竹林步道往南步行約 6 分鐘至渡月橋" },
+          { time: "11:15", title: "渡月橋賞景・嵐山大街午餐", desc: "走過橫跨桂川的渡月橋，於嵐山大街享用湯豆腐定食、蕎麥麵或熱騰騰抹茶拿鐵。", point: "togetsukyo", transit: "嵐電嵐山站搭車（經帷子之辻轉車，約 22 分）至龍安寺站" },
+          { time: "13:45", title: "龍安寺（枯山水石庭）", desc: "靜坐方丈緣側欣賞世界聞名的 15 石枯山水庭園，細看「吾唯知足」錢形蹲踞。", point: "ryoanji", transit: "沿衣掛之路步行約 18 分鐘（或搭市巴士 59 號 2 站）" },
+          { time: "15:15", title: "金閣寺（鹿苑寺）", desc: "欣賞金箔舍利殿倒映在鏡湖池的經典絕景，領取新年開運御守。", point: "kinkakuji", transit: "搭市巴士 205 號（約 40 分）或地鐵北大路轉烏丸線回京都站" },
+          { time: "18:00", title: "返回京都車站晚餐・採買伴手禮", desc: "於京都車站大樓拉麵小路或 Porta 享用晚餐，整理行李準備明日移動至名古屋。", point: "kyotoPorta" }
+        ]
+      },
+      {
+        id: "day3",
+        tabLabel: "Day 3",
+        dateLabel: "1/2（六）",
+        title: "移動日・清洲城 ➔ 名古屋城",
+        subtitle: "東海道新幹線 34 分直達名古屋 ➔ 計程車至名古屋錦日航都市飯店寄放行李 ➔ 清洲城 ➔ 名古屋城與本丸御殿",
+        city: "京都 → 名古屋",
+        routeUrl: "https://www.google.com/maps/dir/?api=1&origin=Nagoya+Station&destination=Hotel+JAL+City+Nagoya+Nishiki&waypoints=Kiyosu+Castle|Nagoya+Castle&travelmode=transit",
+        stops: ["kyotoHotel", "nagoyaSta", "nagoyaHotel", "kiyosuCastle", "nagoyaCastle", "esca"],
+        detailMap: {
+          title: "局部放大：名古屋站 ～ 錦日航飯店 ～ 清洲城 ～ 名古屋城動線",
+          keys: ["nagoyaSta", "nagoyaHotel", "kiyosuCastle", "nagoyaCastle", "esca"],
+          centerLat: 35.192,
+          centerLng: 136.874,
+          spanLat: 0.068,
+          spanLng: 0.088
+        },
+        overviewMap: {
+          title: "跨區移動：京都車站飯店 ➔（新幹線 34 分）➔ 名古屋錦日航都市飯店",
+          keys: ["kyotoHotel", "nagoyaSta", "nagoyaHotel", "kiyosuCastle", "nagoyaCastle"],
+          centerLat: 35.09,
+          centerLng: 136.32,
+          spanLat: 0.42,
+          spanLng: 1.32
+        },
+        warns: [
+          "1/2 為日本新年返鄉與出遊高峰（U-turn 潮），東海道新幹線（京都 → 名古屋）自由席易客滿，強烈建議提前透過 SmartEX 預訂指定席（攜帶大件行李請選「特大行李放置處附帶席」）。",
+          "抵達名古屋站後攜帶大件行李，直接於太閤通口或櫻通口搭乘計程車前往「名古屋錦日航都市飯店」（車程約 5 分鐘、約 ¥1,000），最省時省力。",
+          "清洲城 1/2 新年開館時間為 09:00–15:00，上午前往時間最充裕；名古屋城本丸御殿內部需脫鞋並寄放大型背包。"
+        ],
+        todos: [
+          { id: "d3-t1", text: "提前透過 SmartEX App 預訂 1/2 早上 京都→名古屋 新幹線指定席" }
+        ],
+        timeline: [
+          { time: "08:30", title: "退房並前往京都車站新幹線口", desc: "從 VIA INN PRIME 京都站八條口步行 2–3 分鐘至新幹線口，搭乘「のぞみ」或「ひかり」34 分鐘直達名古屋。", point: "kyotoHotel", transit: "東海道新幹線（34 分）→ 名古屋站" },
+          { time: "09:20", title: "抵達名古屋站 ➔ 搭計程車至名古屋錦日航都市飯店", desc: "抵達名古屋站後直接搭計程車約 5 分鐘（車資約 ¥1,000）至飯店寄放行李，輕裝出發。", point: "nagoyaHotel", transit: "步行 7 分至伏見站搭地鐵至名站，轉名鐵名古屋本線（7 分）→ 新清洲站" },
+          { time: "10:30", title: "清洲城（織田信長居城）", desc: "走過朱紅色大手橋登上清洲城天守閣，遙想桶狹間出陣歷史（1/2 新年開館至 15:00）。", point: "kiyosuCastle", transit: "步行回新清洲站搭名鐵回名站，轉地鐵名城線至「名古屋城站」" },
+          { time: "13:00", title: "金鯱橫丁午餐", desc: "於名古屋城正門旁的「金鯱橫丁（義直區）」品嚐矢場味噌豬排、山本屋煮烏龍或名古屋交趾雞親子丼。", point: "nagoyaCastle", transit: "緊鄰名古屋城正門" },
+          { time: "14:15", title: "名古屋城・本丸御殿", desc: "參觀耗時十年復原、極盡奢華的金箔障壁畫「本丸御殿」，並欣賞天守閣屋頂耀眼的金鯱。", point: "nagoyaCastle", transit: "地鐵名城線「名古屋城站」→「榮站」轉東山線至「伏見站」步行 7 分" },
+          { time: "17:30", title: "名古屋錦日航都市飯店辦理入住・周邊晚餐", desc: "辦理正式入住享受 22㎡ 以上寬敞房型，晚上可於飯店周邊（伏見／榮／名站）大啖名古屋手羽先與味噌豬排。", point: "esca" }
+        ]
+      },
+      {
+        id: "day4",
+        tabLabel: "Day 4",
+        dateLabel: "1/3（日）",
+        title: "熱田神宮 ➔ 大須 ➔ 榮",
+        subtitle: "熱田神宮新年初詣 ➔ 蓬萊軒鰻魚飯三吃 ➔ 大須觀音與商店街邊走邊吃 ➔ 榮商圈・中部電力 MIRAI TOWER 與綠洲 21 夜景",
+        city: "名古屋市區",
+        routeUrl: "https://www.google.com/maps/dir/?api=1&origin=Hotel+JAL+City+Nagoya+Nishiki&destination=Oasis+21+Nagoya&waypoints=Atsuta+Jingu+Nagoya|Atsuta+Horaiken+Jingu|Osu+Kannon+Nagoya|Chubu+Electric+Power+MIRAI+TOWER&travelmode=transit",
+        stops: ["nagoyaHotel", "atsutaJingu", "houraiken", "osuKannon", "hisayaOdori", "oasis21"],
+        detailMap: {
+          title: "局部放大：飯店（伏見）～ 大須觀音 ～ 榮（MIRAI TOWER・綠洲 21）",
+          keys: ["nagoyaHotel", "osuKannon", "hisayaOdori", "oasis21"],
+          centerLat: 35.166,
+          centerLng: 136.902,
+          spanLat: 0.022,
+          spanLng: 0.026
+        },
+        overviewMap: {
+          title: "廣域路線：錦日航飯店 ➔ 熱田神宮（南）➔ 大須 ➔ 榮（北）",
+          keys: ["nagoyaHotel", "atsutaJingu", "houraiken", "osuKannon", "hisayaOdori", "oasis21"],
+          centerLat: 35.152,
+          centerLng: 136.901,
+          spanLat: 0.062,
+          spanLng: 0.044
+        },
+        warns: [
+          "1/3 仍為日本新年三賀日（正月三が日），熱田神宮初詣參拜人潮非常多，名鐵「神宮前站」與地鐵「熱田神宮西站」皆可抵達。",
+          "「あつた蓬萊軒 神宮店」在新年期間排隊極為熱門，強烈建議 09:45–10:15 一到先去門口登記午餐候位時間，再去參拜熱田神宮。"
+        ],
+        todos: [
+          { id: "d4-t1", text: "準備零錢（5 日圓、100 日圓硬幣）方便熱田神宮與大須觀音初詣賽錢與抽籤" }
+        ],
+        timeline: [
+          { time: "09:10", title: "從名古屋錦日航都市飯店出發前往熱田", desc: "步行約 7 分鐘至地鐵「伏見站」，搭東山線 1 站至名站轉名鐵名古屋本線（6 分鐘）至「神宮前站」。", point: "nagoyaHotel", transit: "地鐵伏見站 → 名站轉名鐵（6 分）→ 神宮前站" },
+          { time: "09:45", title: "熱田神宮初詣參拜（先抽蓬萊軒號碼牌）", desc: "先步行 3 分至蓬萊軒神宮店登記午餐時段，再漫步千年楠木林蔭參道參拜草薙神劍。", point: "atsutaJingu", transit: "步行約 3 分鐘" },
+          { time: "11:30", title: "あつた蓬萊軒 神宮店（鰻魚飯三吃）", desc: "品嚐炭火直烤備長炭鰻魚飯（ひつまぶし）：原味、加蔥花芥末海苔、高湯茶泡飯三種吃法。", point: "houraiken", transit: "地鐵名城線至上前津站轉鶴舞線至大須觀音站（約 15 分）" },
+          { time: "13:30", title: "大須觀音參拜・大須商店街逛街", desc: "參拜大須觀音後，穿梭於熱鬧的拱廊商店街，品嚐李桑台灣炸雞、包包亭生煎包，逛古著與扭蛋店。", point: "osuKannon", transit: "沿商店街向北步行至矢場町／榮商圈（約 15–20 分）" },
+          { time: "16:30", title: "久屋大通公園・中部電力 MIRAI TOWER", desc: "在綠意盎然的久屋大通公園喝杯咖啡休憩，等待黃昏時分電視塔亮燈與水盤倒影。", point: "hisayaOdori", transit: "過馬路即達（步行 2 分鐘）" },
+          { time: "18:00", title: "綠洲 21（Oasis 21）夜景與榮商圈晚餐", desc: "登上水之宇宙船玻璃屋頂拍攝電視塔全景，晚餐可於榮商圈享用，結束後步行約 12–15 分鐘或搭地鐵 1 站至伏見站輕鬆走回飯店。", point: "oasis21", transit: "步行約 12–15 分鐘（或地鐵榮站 → 伏見站 1 站）返回飯店" }
+        ]
+      },
+      {
+        id: "day5",
+        tabLabel: "Day 5",
+        dateLabel: "1/4（一）",
+        title: "樂高樂園＋磁浮鐵道館",
+        subtitle: "青波線直達金城埠頭 ➔ 日本樂高樂園暢玩主題園區與迷你樂園 ➔ 磁浮・鐵道館看超導磁浮與歷代新幹線",
+        city: "名古屋・金城埠頭",
+        routeUrl: "https://www.google.com/maps/dir/?api=1&origin=Nagoya+Station&destination=SCMAGLEV+and+Railway+Park&waypoints=LEGOLAND+Japan|Makers+Pier+Nagoya&travelmode=transit",
+        stops: ["nagoyaHotel", "nagoyaSta", "legoland", "makersPier", "scmaglev", "midlandSquare"],
+        detailMap: {
+          title: "局部放大：金城埠頭（樂高樂園・Maker's Pier・磁浮鐵道館）",
+          keys: ["legoland", "makersPier", "scmaglev"],
+          centerLat: 35.0506,
+          centerLng: 136.8468,
+          spanLat: 0.008,
+          spanLng: 0.013
+        },
+        overviewMap: {
+          title: "廣域路線：錦日航飯店 ➔ 名古屋站 ➔（青波線 24 分）➔ 金城埠頭",
+          keys: ["nagoyaHotel", "nagoyaSta", "midlandSquare", "legoland", "scmaglev"],
+          centerLat: 35.110,
+          centerLng: 136.868,
+          spanLat: 0.145,
+          spanLng: 0.088
+        },
+        warns: [
+          "1/4（一）多數日本企業開始上班（仕事始め），樂高樂園與磁浮鐵道館人潮會比 1/1–1/3 明顯減少，遊玩品質極佳！",
+          "磁浮・鐵道館最後入館時間為 17:00（17:30 閉館），請務必最晚 14:30–15:00 前從樂高樂園移動過去，才能留足 2.5 小時參觀。"
+        ],
+        todos: [
+          { id: "d5-t1", text: "事先線上購買日本樂高樂園（LEGOLAND Japan）指定日門票（享早鳥優惠）" },
+          { id: "d5-t2", text: "下載 LEGOLAND Japan 官方 App 查看設施排隊時間與園區地圖" }
+        ],
+        timeline: [
+          { time: "08:55", title: "飯店出發 ➔ 名古屋站轉乘青波線（Aonami Line）", desc: "從名古屋錦日航都市飯店步行至伏見站搭地鐵 1 站至名古屋站，轉乘青波線直達列車（約 24 分鐘）前往終點「金城埠頭站」。", point: "nagoyaSta", transit: "地鐵伏見站 → 名站轉青波線（24 分）→ 金城埠頭站，步行 5 分" },
+          { time: "10:00", title: "日本樂高樂園（LEGOLAND Japan）", desc: "開園入內！必玩潛水艇冒險（Submarine Adventure）、飛龍雲霄飛車、觀景塔以及用千萬顆積木打造的「Miniland 日本名勝」。", point: "legoland", transit: "緊鄰樂園出口" },
+          { time: "13:00", title: "Maker's Pier 午餐", desc: "可於樂高樂園內餐廳或緊鄰的 Maker's Pier 享用漢堡、拉麵或名古屋特色料理（當日再入園需蓋手章）。", point: "makersPier", transit: "步行約 6 分鐘（穿過金城埠頭站前廣場）" },
+          { time: "14:45", title: "磁浮・鐵道館（SCMAGLEV & Railway Park）", desc: "近距離觀賞時速破 600 公里的超導磁浮列車 L0 系、歷代東海道新幹線與日本最大級 HO 規鐵道模型秀。", point: "scmaglev", transit: "金城埠頭站搭青波線（24 分）返回名古屋站" },
+          { time: "18:00", title: "Midland Square / 名站周邊晚餐與藥妝採買", desc: "返回名古屋站，可登上 Midland Square 44–46F 露天展望台賞夜景，並於高島屋或千里馬藥局補齊藥妝伴手禮後回飯店。", point: "midlandSquare", transit: "地鐵名站 → 伏見站 1 站，步行 7 分回名古屋錦日航都市飯店" }
+        ]
+      },
+      {
+        id: "day6",
+        tabLabel: "Day 6",
+        dateLabel: "1/5（二）",
+        title: "Toyota 紀念館 ➔ 返台",
+        subtitle: "退房搭計程車至名站寄放行李 ➔ 豐田產業技術紀念館（1/5 開館首日）➔ 則武之森 ➔ 名鐵 μ-SKY 直達中部國際機場返台",
+        city: "名古屋 → 機場",
+        routeUrl: "https://www.google.com/maps/dir/?api=1&origin=Hotel+JAL+City+Nagoya+Nishiki&destination=Chubu+Centrair+International+Airport&waypoints=Nagoya+Station|Toyota+Commemorative+Museum+of+Industry+and+Technology|Noritake+Garden+Nagoya&travelmode=transit",
+        stops: ["nagoyaHotel", "nagoyaSta", "toyotaMuseum", "noritakeGarden", "ngo"],
+        detailMap: {
+          title: "局部放大：錦日航飯店 ～ 名古屋車站 ～ 則武之森 ～ 豐田紀念館",
+          keys: ["nagoyaHotel", "nagoyaSta", "noritakeGarden", "toyotaMuseum"],
+          centerLat: 35.1755,
+          centerLng: 136.885,
+          spanLat: 0.022,
+          spanLng: 0.026
+        },
+        overviewMap: {
+          title: "廣域路線：豐田紀念館 ➔ 名古屋站 ➔（名鐵 μ-SKY 28 分）➔ 中部機場",
+          keys: ["nagoyaHotel", "toyotaMuseum", "nagoyaSta", "ngo"],
+          centerLat: 35.02,
+          centerLng: 136.84,
+          spanLat: 0.36,
+          spanLng: 0.16
+        },
+        warns: [
+          "豐田產業技術紀念館在 12/26–1/4 期間休館，1/5（二）正好是新年開館首日（09:30 開門），建議準時開館入場可完整欣賞約 2 小時精華。",
+          "星宇 JX839 於 15:05 起飛，務必搭乘 12:00 前發車的名鐵「μ-SKY（ミュースカイ）」全車特別車（需加購 450 日圓特別車輛券，28 分鐘直達機場）。"
+        ],
+        todos: [
+          { id: "d6-t1", text: "前晚完成行李打包與秤重，確認液體與行動電源隨身規定" },
+          { id: "d6-t2", text: "1/5 早上於名鐵名古屋站購買「μ-SKY」指定席車票（確保大件行李有座位）" }
+        ],
+        timeline: [
+          { time: "08:45", title: "名古屋錦日航都市飯店退房 ➔ 計程車至名站寄放行李", desc: "辦理退房後直接搭計程車約 5 分鐘至名古屋車站，將大件行李寄放於車站置物櫃，輕裝出發。", point: "nagoyaHotel", transit: "計程車約 5 分鐘至名站寄物 → 轉名鐵名古屋本線（2 分）至榮生站，步行 3 分" },
+          { time: "09:30", title: "豐田產業技術紀念館（新年開館首日）", desc: "由紅磚紡織廠改建的世界級企業博物館！現場工作人員操作環狀織布機與早期汽車製造機械人，極具震撼力。", point: "toyotaMuseum", transit: "步行約 6 分鐘" },
+          { time: "11:15", title: "則武之森（Noritake Garden）散步", desc: "漫步紅磚倉庫與綠地園區，快速打卡 TSUTAYA BOOKSTORE 鏡面巨型書牆後步行返回名古屋車站。", point: "noritakeGarden", transit: "步行約 10 分鐘回名古屋車站" },
+          { time: "11:45", title: "取行李・搭乘名鐵 μ-SKY 前往機場", desc: "至名站置物櫃取回行李，前往名鐵名古屋站搭乘 12:00 左右發車的特急 μ-SKY，僅 28 分鐘直達中部國際機場。", point: "nagoyaSta", transit: "名鐵特急 μ-SKY（28 分）→ 中部國際機場站" },
+          { time: "12:30", title: "中部國際機場（NGO）報到・午餐・免稅採買", desc: "辦理星宇航空報到託運，於機場 4 樓藍天城享用最後一頓名古屋美食（矢場豬排、世界の山ちゃん或蝦餅伴手禮）。", point: "ngo" },
+          { time: "15:05", title: "星宇 JX839 起飛返台", desc: "帶著滿滿京都跨年與名古屋回憶平安飛返桃園（預計 17:40 抵達 TPE）。", point: "ngo" }
+        ]
+      }
+    ];
+
+    // 已捨棄景點清單 DROPPED
+    const DROPPED = [
+      {
+        name: "伏見稻荷大社（千本鳥居）",
+        area: "京都伏見",
+        reason: "元旦（1/1–1/3）期間為全日本參拜人數前三名神社，單向通行極度擁擠且排隊耗時 2 小時以上，故改以嵐山＋龍安寺＋金閣寺確保順暢體驗。"
+      },
+      {
+        name: "宇治（平等院・中村藤吉）",
+        area: "京都宇治",
+        reason: "12/31 下午抵達京都時間有限，1/1 專注嵐山與洛北金閣寺路線，宇治往返車程約 1 小時且元旦名店排隊過長，留待下次專程造訪。"
+      },
+      {
+        name: "犬山城（國寶天守）",
+        area: "愛知犬山",
+        reason: "與清洲城、名古屋城同為城堡行程，考量 Day 3 上午從京都移動至名古屋，選擇距離名站僅 7 分鐘車程的清洲城＋名古屋城動線最省時。"
+      },
+      {
+        name: "吉卜力公園（Ghibli Park）",
+        area: "愛知長久手",
+        reason: "需提前 2 個月搶購指定時段套票且園區廣大需耗費整天，同行偏好樂高樂園＋磁浮鐵道館組合，故列入候補。"
+      },
+      {
+        name: "白川鄉合掌村一日遊",
+        area: "岐阜飛驒",
+        reason: "冬季高速巴士往返車程高達 5–6 小時且元旦期間班次一位難求，6 日行程以京都市區＋名古屋市區輕鬆深度遊為主。"
+      }
+    ];
+
+    // 總覽額外行前準備清單
+    const GENERAL_TODOS = [
+      { id: "gen-1", text: "確認護照效期（需超過 6 個月）與列印電子機票、住宿確認單" },
+      { id: "gen-2", text: "購買日本上網 eSIM / SIM 卡（6 日無限流量或每日 2GB 以上）" },
+      { id: "gen-3", text: "投保海外旅遊平安險＋不便險（涵蓋冬季班機延誤與海外醫療）" },
+      { id: "gen-4", text: "準備保暖衣物（發熱衣、羽絨外套、手套、毛帽、好走的防滑鞋）" },
+      { id: "gen-5", text: "兌換日幣現金（寺社拜觀料、屋台小吃與部分老店僅收現金）" }
+    ];
+
+    /**
+     * ============================================================================
+     * 2. 狀態管理與 localStorage（行前清單勾選狀態、目前分頁、高亮地點）
+     * ============================================================================
+     */
+    const STORAGE_KEY = "kyoto_nagoya_trip_todos_v2";
+    let todoState = {};
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) todoState = JSON.parse(saved);
+    } catch (e) {
+      todoState = {};
+    }
+
+    function saveTodoState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(todoState));
+      } catch (e) {
+        // 忽略無痕模式限制
+      }
+    }
+
+    let currentTab = "overview"; // "overview" | "day1" .. "day6"
+    let activePointKey = null;
+
+    // 支援 URL Hash 定位分頁（例如 #day2）
+    function initTabFromHash() {
+      const hash = (window.location.hash || "").replace("#", "").trim();
+      if (hash === "overview" || DAYS.some(d => d.id === hash)) {
+        currentTab = hash;
+      }
+    }
+
+    /**
+     * ============================================================================
+     * 3. 向量互動路線圖渲染器（完全自給自足，含地理網格、水體/海岸輪廓、主路線與局部放大圖）
+     * ============================================================================
+     */
+    function buildVectorMapSVG(config, stopOrderList, selectedKey, mapIdPrefix) {
+      const { keys, centerLat, centerLng, spanLat, spanLng } = config;
+      const width = 640;
+      const height = 340;
+      const padX = 56;
+      const padY = 42;
+
+      function project(lat, lng) {
+        const nx = (lng - (centerLng - spanLng / 2)) / spanLng;
+        const ny = 1 - (lat - (centerLat - spanLat / 2)) / spanLat;
+        return {
+          x: padX + nx * (width - padX * 2),
+          y: padY + ny * (height - padY * 2)
+        };
+      }
+
+      // 地理參考輪廓（簡易水體、海岸與河川示意，增添日系地圖質感）
+      let geoFeatures = "";
+
+      if (centerLng < 135.6 && spanLng > 0.3) {
+        const seaP1 = project(34.50, 135.05);
+        const seaP2 = project(34.68, 135.38);
+        geoFeatures += `
+          <path d="M 0 ${height} L 0 ${seaP1.y} Q ${seaP2.x * 0.6} ${seaP2.y}, ${seaP2.x} ${height} Z"
+                fill="#dceaf2" opacity="0.7" />
+          <text x="36" y="${height - 18}" font-size="11" fill="#5e87a1" font-weight="600">大阪灣</text>
+        `;
+      }
+
+      if (centerLng > 136.7 && centerLat < 35.14) {
+        const bayTop = project(35.055, 136.75);
+        const bayRight = project(34.82, 136.86);
+        geoFeatures += `
+          <path d="M 0 ${bayTop.y + 18} Q ${width * 0.45} ${bayTop.y + 8}, ${bayRight.x} ${height} L 0 ${height} Z"
+                fill="#dceaf2" opacity="0.75" />
+          <text x="34" y="${height - 18}" font-size="11" fill="#5e87a1" font-weight="600">伊勢灣・名古屋港</text>
+        `;
+      }
+
+      if (centerLng > 135.65 && centerLng < 135.82 && spanLng < 0.15) {
+        const kamoTop = project(35.045, 135.770);
+        const kamoBot = project(34.975, 135.768);
+        const katsuraTop = project(35.016, 135.675);
+        const katsuraBot = project(34.995, 135.695);
+        geoFeatures += `
+          <path d="M ${kamoTop.x} ${kamoTop.y} Q ${(kamoTop.x + kamoBot.x) / 2 + 4} ${(kamoTop.y + kamoBot.y) / 2}, ${kamoBot.x} ${kamoBot.y}"
+                stroke="#bdd8e8" stroke-width="7" fill="none" stroke-linecap="round" opacity="0.75" />
+          <path d="M ${katsuraTop.x} ${katsuraTop.y} Q ${(katsuraTop.x + katsuraBot.x) / 2 - 6} ${(katsuraTop.y + katsuraBot.y) / 2}, ${katsuraBot.x} ${katsuraBot.y}"
+                stroke="#bdd8e8" stroke-width="8" fill="none" stroke-linecap="round" opacity="0.75" />
+        `;
+      }
+
+      const points = keys
+        .filter(k => S[k])
+        .map((k, idx) => {
+          const item = S[k];
+          const pt = project(item.lat, item.lng);
+          const stopIndex = stopOrderList.indexOf(k);
+          return {
+            key: k,
+            item,
+            x: Math.max(32, Math.min(width - 32, pt.x)),
+            y: Math.max(30, Math.min(height - 30, pt.y)),
+            num: stopIndex >= 0 ? stopIndex + 1 : idx + 1
+          };
+        });
+
+      let routePathD = "";
+      points.forEach((p, idx) => {
+        routePathD += (idx === 0 ? `M ${p.x.toFixed(1)} ${p.y.toFixed(1)}` : ` L ${p.x.toFixed(1)} ${p.y.toFixed(1)}`);
+      });
+
+      const labelPositions = points.map((p, idx) => {
+        let dx = 0;
+        let dy = -16;
+        let anchor = "middle";
+
+        if (idx > 0) {
+          const prev = points[idx - 1];
+          if (Math.abs(p.y - prev.y) < 26 && Math.abs(p.x - prev.x) < 95) {
+            dy = idx % 2 === 0 ? -17 : 24;
+          }
+        }
+        if (p.x < 95) {
+          anchor = "start";
+          dx = 14;
+          dy = 4;
+        } else if (p.x > width - 95) {
+          anchor = "end";
+          dx = -14;
+          dy = 4;
+        }
+        return { dx, dy, anchor };
+      });
+
+      let gridLines = "";
+      for (let gx = 80; gx < width; gx += 80) {
+        gridLines += `<line x1="${gx}" y1="0" x2="${gx}" y2="${height}" stroke="#e7e0d4" stroke-width="1" />`;
+      }
+      for (let gy = 68; gy < height; gy += 68) {
+        gridLines += `<line x1="0" y1="${gy}" x2="${width}" y2="${gy}" stroke="#e7e0d4" stroke-width="1" />`;
+      }
+
+      const markersSvg = points.map((p, idx) => {
+        const isSelected = selectedKey === p.key;
+        const isHotel = Boolean(p.item.isHotel);
+        const fill = isHotel ? "#1f5f8b" : "#b4332b";
+        const lp = labelPositions[idx];
+        const shortName = p.item.name.split("（")[0].split("・")[0];
+
+        return `
+          <g class="map-node cursor-pointer ${isSelected ? "marker-active" : ""}"
+             data-point="${p.key}"
+             role="button"
+             tabindex="0"
+             aria-label="定位 ${p.item.name}">
+            ${isSelected ? `
+              <circle cx="${p.x}" cy="${p.y}" r="15" fill="${fill}" class="pulse-ring" />
+              <circle cx="${p.x}" cy="${p.y}" r="18" fill="none" stroke="${fill}" stroke-width="2" opacity="0.65" />
+            ` : ""}
+            <circle cx="${p.x}" cy="${p.y}" r="${isSelected ? 13 : 11}"
+                    fill="${fill}" stroke="#ffffff" stroke-width="2.5"
+                    style="filter: drop-shadow(0 2px 3px rgba(0,0,0,0.22));" />
+            <text x="${p.x}" y="${p.y + 4}" text-anchor="middle"
+                  font-size="11" font-weight="700" fill="#ffffff"
+                  font-family="Noto Sans TC, sans-serif">${p.num}</text>
+
+            <text x="${p.x + lp.dx}" y="${p.y + lp.dy}" text-anchor="${lp.anchor}"
+                  font-size="11.5" font-weight="${isSelected ? "900" : "700"}"
+                  stroke="#fdfbf7" stroke-width="4" stroke-linejoin="round"
+                  fill="#fdfbf7" font-family="Noto Sans TC, sans-serif">${shortName}</text>
+            <text x="${p.x + lp.dx}" y="${p.y + lp.dy}" text-anchor="${lp.anchor}"
+                  font-size="11.5" font-weight="${isSelected ? "900" : "700"}"
+                  fill="${isSelected ? fill : "#2a2622"}"
+                  font-family="Noto Sans TC, sans-serif">${shortName}</text>
+          </g>
+        `;
+      }).join("");
+
+      return `
+        <svg id="${mapIdPrefix}" viewBox="0 0 ${width} ${height}" class="w-full h-auto block rounded-xl bg-[#f4efe6] border border-[#e4ddd1] select-none" role="img" aria-label="${config.title}">
+          <defs>
+            <marker id="arrow-${mapIdPrefix}" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#b4332b" opacity="0.7" />
+            </marker>
+          </defs>
+          ${gridLines}
+          ${geoFeatures}
+          <path d="${routePathD}" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="0.85" />
+          <path d="${routePathD}" fill="none" stroke="#b4332b" stroke-width="2.4" stroke-dasharray="6 5"
+                stroke-linecap="round" stroke-linejoin="round" marker-mid="url(#arrow-${mapIdPrefix})" />
+          ${markersSvg}
+        </svg>
+      `;
+    }
+
+    /**
+     * ============================================================================
+     * 4. UI 渲染函式（分頁列、總覽頁、每日行程頁）
+     * ============================================================================
+     */
+    function renderTabs() {
+      const tabBar = document.getElementById("tabBar");
+      const items = [
+        { id: "overview", label: "總覽", sub: "12/31–1/5" },
+        ...DAYS.map(d => ({ id: d.id, label: d.tabLabel, sub: d.dateLabel.replace(/（.）/, "") }))
+      ];
+
+      tabBar.innerHTML = items.map(item => {
+        const active = currentTab === item.id;
+        return `
+          <button
+            type="button"
+            data-tab="${item.id}"
+            class="tab-btn shrink-0 px-3.5 py-2 rounded-xl text-left transition flex flex-col items-center justify-center min-w-[68px] sm:min-w-[82px] border ${
+              active
+                ? "bg-[#b4332b] text-white border-[#b4332b] shadow-sm"
+                : "bg-white/90 text-[#2a2622] border-[#e4ddd1] hover:bg-[#f9ebe9]/60"
+            }"
+          >
+            <span class="text-xs sm:text-sm font-bold leading-tight">${item.label}</span>
+            <span class="text-[10px] leading-tight mt-0.5 ${active ? "text-white/90" : "text-[#6e675f]"}">${item.sub}</span>
+          </button>
+        `;
+      }).join("");
+
+      tabBar.querySelectorAll(".tab-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          switchTab(btn.dataset.tab);
+        });
+      });
+    }
+
+    function switchTab(tabId, scrollTop = true) {
+      currentTab = tabId;
+      activePointKey = null;
+      try {
+        history.replaceState(null, "", `#${tabId}`);
+      } catch (e) {}
+      renderTabs();
+      renderMain();
+      if (scrollTop) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }
+
+    function renderOverview() {
+      const allTodos = [
+        ...GENERAL_TODOS.map(t => ({ ...t, group: "行前共通準備" })),
+        ...DAYS.flatMap(d => d.todos.map(t => ({ ...t, group: `${d.tabLabel}（${d.dateLabel}）` })))
+      ];
+      const completedCount = allTodos.filter(t => todoState[t.id]).length;
+
+      return `
+        <div class="space-y-5">
+          <!-- 旅程摘要橫幅 -->
+          <section class="journal-card p-4 sm:p-6 bg-gradient-to-br from-[#fdfbf7] via-[#ffffff] to-[#f9ebe9]/40">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <span class="text-xs font-bold tracking-wider uppercase text-[#b4332b]">2026–2027 WINTER NEW YEAR ITINERARY</span>
+              <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-[#f7f1e3] text-[#a67c2e] border border-[#e8dcc2]">
+                京都 2 晚 ＋ 名古屋 3 晚（住宿皆已預訂）
+              </span>
+            </div>
+            <h2 class="font-serif-tc text-xl sm:text-2xl font-bold text-[#2a2622]">
+              跨越關西古都與中部名城的 6 日跨年之旅
+            </h2>
+            <p class="text-sm text-[#6e675f] mt-1.5">
+              12/31 星宇航空飛抵神戶直奔京都東山跨年（知恩院撞鐘＋八坂神社白朮祭）、元旦漫遊天龍寺、嵐山竹林與金閣寺；1/2 搭乘東海道新幹線轉往名古屋入住錦日航都市飯店，走訪清洲城、名古屋城、熱田神宮初詣、樂高樂園、磁浮鐵道館與豐田產業技術紀念館。
+            </p>
+          </section>
+
+          <!-- 航班資訊 -->
+          <section class="journal-card p-4 sm:p-5">
+            <div class="flex items-center gap-2 mb-3.5">
+              <span class="w-1.5 h-5 rounded-full bg-[#1f5f8b]"></span>
+              <h3 class="font-serif-tc text-base sm:text-lg font-bold">航班資訊（星宇航空 STARLUX）</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+              ${FLIGHTS.map(f => `
+                <div class="rounded-xl border border-[#e4ddd1] bg-[#fdfbf7] p-3.5">
+                  <div class="flex items-center justify-between gap-2 mb-2">
+                    <span class="px-2.5 py-0.5 rounded-md text-xs font-bold ${f.dir === "去程" ? "bg-[#b4332b] text-white" : "bg-[#1f5f8b] text-white"}">
+                      ${f.dir}・${f.date}
+                    </span>
+                    <span class="text-xs font-bold text-[#2a2622]">${f.airline} ${f.code}</span>
+                  </div>
+                  <div class="flex items-center justify-between my-2.5 px-1">
+                    <div>
+                      <div class="text-lg font-black text-[#2a2622]">${f.dep}</div>
+                      <div class="text-xs text-[#6e675f]">${f.from}</div>
+                    </div>
+                    <div class="flex-1 px-3 flex flex-col items-center">
+                      <span class="text-[11px] text-[#6e675f]">直飛</span>
+                      <div class="w-full h-[1.5px] bg-[#d4cbbd] relative my-1">
+                        <span class="absolute right-0 -top-[3.5px] w-2 h-2 border-t-2 border-r-2 border-[#b4332b] rotate-45"></span>
+                      </div>
+                    </div>
+                    <div class="text-right">
+                      <div class="text-lg font-black text-[#2a2622]">${f.arr}</div>
+                      <div class="text-xs text-[#6e675f]">${f.to}</div>
+                    </div>
+                  </div>
+                  <p class="text-xs text-[#6e675f] bg-white rounded-lg p-2.5 border border-[#ece6db]">
+                    ${f.note}
+                  </p>
+                </div>
+              `).join("")}
+            </div>
+          </section>
+
+          <!-- 住宿資訊 -->
+          <section class="journal-card p-4 sm:p-5">
+            <div class="flex items-center gap-2 mb-3.5">
+              <span class="w-1.5 h-5 rounded-full bg-[#1f5f8b]"></span>
+              <h3 class="font-serif-tc text-base sm:text-lg font-bold">住宿安排（已預訂・寬敞浴廁分離房型）</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+              ${HOTELS.map(h => {
+                const pt = S[h.pointKey];
+                return `
+                  <div class="rounded-xl border border-[#d6e4ee] bg-[#e9f2f8]/45 p-3.5 flex flex-col justify-between">
+                    <div>
+                      <div class="flex items-center justify-between gap-2 mb-1">
+                        <span class="text-xs font-bold text-[#1f5f8b]">${h.days}</span>
+                        <span class="text-xs text-[#6e675f]">${h.dates}</span>
+                      </div>
+                      <h4 class="text-base font-bold text-[#2a2622] mb-1.5">${h.area}</h4>
+                      <p class="text-xs sm:text-sm text-[#4a443e] leading-relaxed">${h.desc}</p>
+                    </div>
+                    <div class="mt-3 pt-2.5 border-t border-[#d6e4ee] flex justify-end">
+                      <a href="${pt.gmap}" target="_blank" rel="noopener noreferrer"
+                         class="inline-flex items-center gap-1 text-xs font-bold text-[#1f5f8b] hover:underline">
+                        <span>開啟飯店 Google 地圖</span>
+                        <span>↗</span>
+                      </a>
+                    </div>
+                  </div>
+                `;
+              }).join("")}
+            </div>
+          </section>
+
+          <!-- 每日一覽（點擊跳轉分頁） -->
+          <section class="journal-card p-4 sm:p-5">
+            <div class="flex items-center justify-between gap-2 mb-3.5">
+              <div class="flex items-center gap-2">
+                <span class="w-1.5 h-5 rounded-full bg-[#b4332b]"></span>
+                <h3 class="font-serif-tc text-base sm:text-lg font-bold">每日行程一覽（點擊檢視詳細路線與地圖）</h3>
+              </div>
+            </div>
+            <div class="space-y-2.5">
+              ${DAYS.map(d => `
+                <button
+                  type="button"
+                  data-jump-day="${d.id}"
+                  class="jump-day-btn w-full text-left rounded-xl border border-[#e4ddd1] bg-[#fdfbf7] hover:bg-[#f9ebe9]/55 hover:border-[#b4332b]/50 p-3.5 transition flex items-center justify-between gap-3 group"
+                >
+                  <div class="min-w-0">
+                    <div class="flex flex-wrap items-center gap-2">
+                      <span class="px-2 py-0.5 rounded-md text-xs font-bold bg-[#b4332b] text-white">${d.tabLabel}</span>
+                      <span class="text-xs font-bold text-[#6e675f]">${d.dateLabel}</span>
+                      <span class="text-[11px] px-2 py-0.5 rounded-full bg-[#eee8dd] text-[#5a534b]">${d.city}</span>
+                    </div>
+                    <div class="font-bold text-sm sm:text-base text-[#2a2622] mt-1 group-hover:text-[#b4332b] transition">
+                      ${d.title}
+                    </div>
+                    <div class="text-xs text-[#6e675f] truncate mt-0.5">${d.subtitle}</div>
+                  </div>
+                  <span class="shrink-0 w-8 h-8 rounded-full bg-white border border-[#e4ddd1] flex items-center justify-center text-[#b4332b] group-hover:translate-x-0.5 transition">
+                    →
+                  </span>
+                </button>
+              `).join("")}
+            </div>
+          </section>
+
+          <!-- 全部行前待辦清單 -->
+          <section class="journal-card p-4 sm:p-5">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3.5">
+              <div class="flex items-center gap-2">
+                <span class="w-1.5 h-5 rounded-full bg-[#a67c2e]"></span>
+                <h3 class="font-serif-tc text-base sm:text-lg font-bold">行前待辦清單（自動儲存勾選狀態）</h3>
+              </div>
+              <span id="todoProgressBadge" class="text-xs font-bold px-2.5 py-1 rounded-full bg-[#f7f1e3] text-[#a67c2e]">
+                已完成 ${completedCount} / ${allTodos.length} 項
+              </span>
+            </div>
+            <div class="space-y-2">
+              ${allTodos.map(item => {
+                const checked = Boolean(todoState[item.id]);
+                return `
+                  <label class="flex items-start gap-3 p-2.5 rounded-xl border border-[#ece6db] bg-[#fdfbf7] hover:bg-white cursor-pointer transition">
+                    <input type="checkbox" class="custom-check mt-0.5 todo-checkbox" data-todo-id="${item.id}" ${checked ? "checked" : ""} />
+                    <div class="flex-1 min-w-0">
+                      <span class="text-xs sm:text-sm ${checked ? "line-through text-[#9a9288]" : "text-[#2a2622] font-medium"}">${item.text}</span>
+                      <span class="ml-1.5 inline-block text-[10px] px-1.5 py-0.2 rounded bg-[#eee8dd] text-[#6e675f]">${item.group}</span>
+                    </div>
+                  </label>
+                `;
+              }).join("")}
+            </div>
+          </section>
+
+          <!-- 已捨棄景點清單 -->
+          <section class="journal-card p-4 sm:p-5">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="w-1.5 h-5 rounded-full bg-[#6e675f]"></span>
+              <h3 class="font-serif-tc text-base sm:text-lg font-bold">已捨棄景點與路線取捨原因</h3>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              ${DROPPED.map(d => `
+                <div class="rounded-xl border border-[#e4ddd1] bg-[#f8f5ef] p-3">
+                  <div class="flex items-center justify-between gap-2 mb-1">
+                    <span class="text-sm font-bold text-[#2a2622]">${d.name}</span>
+                    <span class="text-[11px] px-2 py-0.5 rounded bg-white border border-[#e4ddd1] text-[#6e675f]">${d.area}</span>
+                  </div>
+                  <p class="text-xs text-[#6e675f] leading-relaxed">${d.reason}</p>
+                </div>
+              `).join("")}
+            </div>
+          </section>
+        </div>
+      `;
+    }
+
+    function renderDay(day) {
+      return `
+        <div class="space-y-5">
+          <!-- 當日標題卡片 -->
+          <section class="journal-card p-4 sm:p-5">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-[#b4332b] text-white">${day.tabLabel}</span>
+                <span class="text-sm font-bold text-[#2a2622]">${day.dateLabel}</span>
+                <span class="text-xs px-2.5 py-0.5 rounded-full bg-[#f7f1e3] text-[#a67c2e] font-medium">${day.city}</span>
+              </div>
+              <a href="${day.routeUrl}" target="_blank" rel="noopener noreferrer"
+                 class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#1f5f8b] text-white hover:bg-[#184b6e] transition shadow-sm">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                </svg>
+                <span>當日 Google 路線導航 ↗</span>
+              </a>
+            </div>
+            <h2 class="font-serif-tc text-xl sm:text-2xl font-bold text-[#2a2622]">${day.title}</h2>
+            <p class="text-xs sm:text-sm text-[#6e675f] mt-1">${day.subtitle}</p>
+          </section>
+
+          <!-- 互動路線圖與局部放大圖 -->
+          <section id="mapSection" class="journal-card p-4 sm:p-5">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <div class="flex items-center gap-2">
+                <span class="w-1.5 h-5 rounded-full bg-[#b4332b]"></span>
+                <h3 class="font-serif-tc text-base sm:text-lg font-bold">互動路線圖（點擊時間軸或地圖圓點定位）</h3>
+              </div>
+              <div class="flex items-center gap-3 text-[11px] text-[#6e675f] bg-[#fdfbf7] px-2.5 py-1 rounded-lg border border-[#e4ddd1]">
+                <span class="inline-flex items-center gap-1">
+                  <span class="w-2.5 h-2.5 rounded-full bg-[#b4332b] inline-block"></span> 景點／車站
+                </span>
+                <span class="inline-flex items-center gap-1">
+                  <span class="w-2.5 h-2.5 rounded-full bg-[#1f5f8b] inline-block"></span> 住宿飯店
+                </span>
+                <span class="inline-flex items-center gap-1">
+                  <span class="w-4 border-t-2 border-dashed border-[#b4332b] inline-block"></span> 動線順序
+                </span>
+              </div>
+            </div>
+
+            <!-- 選中地點提示條 -->
+            <div id="selectedSpotBanner" class="${activePointKey && S[activePointKey] ? "" : "hidden"} mb-3 p-3 rounded-xl bg-[#f9ebe9] border border-[#b4332b]/30 flex flex-wrap items-center justify-between gap-2">
+              <div class="min-w-0">
+                <div class="text-xs font-bold text-[#b4332b]">目前定位地點</div>
+                <div id="selectedSpotTitle" class="text-sm font-bold text-[#2a2622]">
+                  ${activePointKey && S[activePointKey] ? S[activePointKey].name : ""}
+                </div>
+                <div id="selectedSpotNote" class="text-xs text-[#5a534b] mt-0.5">
+                  ${activePointKey && S[activePointKey] ? S[activePointKey].note : ""}
+                </div>
+              </div>
+              <a id="selectedSpotLink" href="${activePointKey && S[activePointKey] ? S[activePointKey].gmap : "#"}"
+                 target="_blank" rel="noopener noreferrer"
+                 class="shrink-0 px-3 py-1.5 rounded-lg bg-white border border-[#b4332b]/30 text-xs font-bold text-[#b4332b] hover:bg-[#b4332b] hover:text-white transition">
+                開啟地圖 ↗
+              </a>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div>
+                <div class="text-xs font-bold text-[#6e675f] mb-1.5 flex items-center justify-between">
+                  <span>① ${day.overviewMap.title}</span>
+                </div>
+                <div id="overviewMapWrap">
+                  ${buildVectorMapSVG(day.overviewMap, day.stops, activePointKey, "svg-overview")}
+                </div>
+              </div>
+
+              <div>
+                <div class="text-xs font-bold text-[#6e675f] mb-1.5 flex items-center justify-between">
+                  <span>② ${day.detailMap.title}</span>
+                </div>
+                <div id="detailMapWrap">
+                  ${buildVectorMapSVG(day.detailMap, day.stops, activePointKey, "svg-detail")}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 當日時間軸 -->
+          <section class="journal-card p-4 sm:p-5">
+            <div class="flex items-center gap-2 mb-4">
+              <span class="w-1.5 h-5 rounded-full bg-[#b4332b]"></span>
+              <h3 class="font-serif-tc text-base sm:text-lg font-bold">詳細時間軸</h3>
+            </div>
+
+            <div class="space-y-3">
+              ${day.timeline.map(item => {
+                const pt = item.point ? S[item.point] : null;
+                const stopNum = item.point ? day.stops.indexOf(item.point) + 1 : 0;
+                const isSelected = activePointKey && activePointKey === item.point;
+                const isHotel = pt && pt.isHotel;
+
+                return `
+                  <div
+                    class="timeline-row rounded-xl border p-3.5 ${
+                      pt ? "is-clickable cursor-pointer" : ""
+                    } ${isSelected ? "is-selected" : "border-[#e4ddd1] bg-[#fdfbf7]"}"
+                    ${pt ? `data-focus-point="${item.point}"` : ""}
+                  >
+                    <div class="flex items-start gap-3">
+                      <div class="flex flex-col items-center shrink-0 w-14">
+                        <span class="text-xs sm:text-sm font-black text-[#2a2622] tracking-tight">${item.time}</span>
+                        ${stopNum > 0 ? `
+                          <span class="mt-1.5 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-sm ${
+                            isHotel ? "bg-[#1f5f8b]" : "bg-[#b4332b]"
+                          }">
+                            ${stopNum}
+                          </span>
+                        ` : `
+                          <span class="mt-1.5 w-2.5 h-2.5 rounded-full bg-[#c8bfb0]"></span>
+                        `}
+                      </div>
+
+                      <div class="flex-1 min-w-0">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                          <h4 class="text-sm sm:text-base font-bold text-[#2a2622]">${item.title}</h4>
+                          ${pt ? `
+                            <div class="flex items-center gap-1.5">
+                              <button type="button"
+                                class="locate-btn px-2 py-1 rounded-lg text-[11px] font-bold bg-white border border-[#e4ddd1] text-[#b4332b] hover:bg-[#f9ebe9] transition"
+                                data-focus-point="${item.point}">
+                                地圖定位
+                              </button>
+                              <a href="${pt.gmap}" target="_blank" rel="noopener noreferrer"
+                                 onclick="event.stopPropagation()"
+                                 class="px-2 py-1 rounded-lg text-[11px] font-bold bg-white border border-[#e4ddd1] text-[#1f5f8b] hover:bg-[#e9f2f8] transition">
+                                Google 地圖 ↗
+                              </a>
+                            </div>
+                          ` : ""}
+                        </div>
+
+                        <p class="text-xs sm:text-sm text-[#4a443e] mt-1 leading-relaxed">${item.desc}</p>
+
+                        ${pt && pt.note ? `
+                          <div class="mt-2 text-xs text-[#6e675f] bg-white/90 rounded-lg px-2.5 py-1.5 border border-[#ece6db]">
+                            <span class="font-bold text-[#a67c2e]">筆記：</span>${pt.note}
+                          </div>
+                        ` : ""}
+
+                        ${item.transit ? `
+                          <div class="mt-2.5 pt-2 border-t border-dashed border-[#dfd7c8] flex items-center gap-1.5 text-xs font-medium text-[#1f5f8b]">
+                            <span>移動方式：</span>
+                            <span>${item.transit}</span>
+                          </div>
+                        ` : ""}
+                      </div>
+                    </div>
+                  </div>
+                `;
+              }).join("")}
+            </div>
+          </section>
+
+          <!-- 當日注意事項 & 待辦 -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <section class="journal-card p-4 sm:p-5 bg-[#f9ebe9]/35 border-[#e8cbc8]">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="w-1.5 h-5 rounded-full bg-[#b4332b]"></span>
+                <h3 class="font-serif-tc text-base font-bold text-[#b4332b]">當日注意事項與提醒</h3>
+              </div>
+              <ul class="space-y-2 text-xs sm:text-sm text-[#3b3530]">
+                ${day.warns.map(w => `
+                  <li class="flex items-start gap-2">
+                    <span class="text-[#b4332b] font-bold mt-0.5">•</span>
+                    <span class="leading-relaxed">${w}</span>
+                  </li>
+                `).join("")}
+              </ul>
+            </section>
+
+            <section class="journal-card p-4 sm:p-5">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="w-1.5 h-5 rounded-full bg-[#a67c2e]"></span>
+                <h3 class="font-serif-tc text-base font-bold">本日前置待辦清單</h3>
+              </div>
+              <div class="space-y-2">
+                ${day.todos.map(t => {
+                  const checked = Boolean(todoState[t.id]);
+                  return `
+                    <label class="flex items-start gap-2.5 p-2.5 rounded-xl border border-[#ece6db] bg-[#fdfbf7] hover:bg-white cursor-pointer transition">
+                      <input type="checkbox" class="custom-check mt-0.5 todo-checkbox" data-todo-id="${t.id}" ${checked ? "checked" : ""} />
+                      <span class="text-xs sm:text-sm ${checked ? "line-through text-[#9a9288]" : "text-[#2a2622] font-medium"}">${t.text}</span>
+                    </label>
+                  `;
+                }).join("")}
+              </div>
+            </section>
+          </div>
+        </div>
+      `;
+    }
+
+    /**
+     * ============================================================================
+     * 5. 事件綁定（地圖雙向定位、待辦勾選儲存、分享按鈕）
+     * ============================================================================
+     */
+    function focusPointOnMap(pointKey, shouldScrollToMap = true) {
+      if (!pointKey || !S[pointKey]) return;
+      activePointKey = pointKey;
+
+      const day = DAYS.find(d => d.id === currentTab);
+      if (!day) return;
+
+      renderMain();
+
+      if (shouldScrollToMap) {
+        const mapSec = document.getElementById("mapSection");
+        if (mapSec) {
+          mapSec.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+      }
+    }
+
+    function renderMain() {
+      const main = document.getElementById("appMain");
+      if (currentTab === "overview") {
+        main.innerHTML = renderOverview();
+
+        main.querySelectorAll(".jump-day-btn").forEach(btn => {
+          btn.addEventListener("click", () => {
+            switchTab(btn.dataset.jumpDay);
+          });
+        });
+      } else {
+        const day = DAYS.find(d => d.id === currentTab) || DAYS[0];
+        main.innerHTML = renderDay(day);
+
+        main.querySelectorAll("[data-focus-point]").forEach(el => {
+          el.addEventListener("click", e => {
+            e.stopPropagation();
+            focusPointOnMap(el.dataset.focusPoint, true);
+          });
+        });
+
+        main.querySelectorAll(".map-node").forEach(node => {
+          node.addEventListener("click", e => {
+            e.stopPropagation();
+            focusPointOnMap(node.dataset.point, false);
+          });
+        });
+      }
+
+      main.querySelectorAll(".todo-checkbox").forEach(cb => {
+        cb.addEventListener("change", () => {
+          const id = cb.dataset.todoId;
+          todoState[id] = cb.checked;
+          saveTodoState();
+          renderMain();
+          showToast(cb.checked ? "已勾選完成項目" : "已取消勾選");
+        });
+      });
+    }
+
+    let toastTimer = null;
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      const toastText = document.getElementById("toastText");
+      toastText.textContent = msg;
+      toast.classList.remove("opacity-0");
+      toast.classList.add("opacity-100");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove("opacity-100");
+        toast.classList.add("opacity-0");
+      }, 2200);
+    }
+
+    function setupShareButton() {
+      const shareBtn = document.getElementById("shareBtn");
+      shareBtn.addEventListener("click", async () => {
+        const shareUrl = window.location.href;
+        const shareTitle = "京都＋名古屋 6 日行程（12/31–1/5）";
+        const shareText = "這是我們的京都＋名古屋 6 日跨年行程表與互動路線圖，點擊即可查看每日動線與導航！";
+
+        if (navigator.share) {
+          try {
+            await navigator.share({
+              title: shareTitle,
+              text: shareText,
+              url: shareUrl
+            });
+            return;
+          } catch (err) {
+            if (err && err.name === "AbortError") return;
+          }
+        }
+
+        try {
+          const tempInput = document.createElement("textarea");
+          tempInput.value = shareUrl;
+          tempInput.setAttribute("readonly", "");
+          tempInput.style.position = "fixed";
+          tempInput.style.opacity = "0";
+          document.body.appendChild(tempInput);
+          tempInput.select();
+          document.execCommand("copy");
+          document.body.removeChild(tempInput);
+          showToast("已複製行程分享連結！");
+        } catch (e) {
+          showToast("請複製瀏覽器網址列分享給旅伴");
+        }
+      });
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      initPasscodeGate();
+      initTabFromHash();
+      renderTabs();
+      renderMain();
+      setupShareButton();
+    });
+  </script>
+</body>
+</html>
