@@ -262,7 +262,7 @@
      * 0. 通行密碼設定（可隨時在此修改密碼）
      * ============================================================================
      */
-    const TRIP_PASSCODE = "04140705"; 
+    const TRIP_PASSCODE = "04140705"; // ← 預設密碼為出發日 1231，可自行改成任意數字或英文
     const AUTH_STORAGE_KEY = "kyoto_nagoya_trip_unlocked_v1";
 
     function initPasscodeGate() {
@@ -369,7 +369,7 @@
         lat: 35.0034,
         lng: 135.7748,
         area: "祇園",
-        note: "茶屋街風情，晚餐可於祇園或河原町周邊享用京料理、拉麵或壽喜燒（跨年夜務必提前訂位）",
+        note: "茶屋街風情，晚餐建議訂 18:00–18:30 於祇園或河原町周邊享用（跨年夜務必提前訂位），餐後散步 8 分鐘去知恩院排隊",
         gmap: "https://www.google.com/maps/search/?api=1&query=Hanamikoji+Street+Kyoto"
       },
       chionin: {
@@ -553,12 +553,12 @@
 
       // Day 5 樂高樂園＋磁浮鐵道館
       legoland: {
-        name: "日本樂高樂園（LEGOLAND Japan）",
+        name: "日本樂高樂園（已購票 ✅）",
         en: "LEGOLAND Japan Resort",
         lat: 35.0507,
         lng: 136.8436,
         area: "金城埠頭",
-        note: "搭乘青波線（Aonami Line）至終點「金城埠頭站」步行 5 分；建議 10:00 開園前抵達，優先玩潛水艇與雲霄飛車",
+        note: "已購妥指定日門票！搭乘青波線（Aonami Line）至終點「金城埠頭站」步行 5 分；建議 10:00 開園前抵達，優先玩潛水艇與雲霄飛車",
         gmap: "https://www.google.com/maps/search/?api=1&query=LEGOLAND+Japan"
       },
       makersPier: {
@@ -692,22 +692,22 @@
         },
         warns: [
           "知恩院除夜之鐘（約 22:40 開始）在 22:30 左右常會關閉入口停止排隊，而八坂神社為 24 小時開放，因此務必「先去知恩院排隊聽撞鐘（建議 21:45–22:00 抵達），結束後再步行 8 分鐘至八坂神社參拜白朮祭跨年」。",
-          "12/31 傍晚起東山・祇園周邊實施大規模交通管制，公車會改道或停駛，回程請預留步行至京阪祇園四條站或地鐵東山站的時間。",
-          "日本除夕夜多數餐廳提早打烊或採預約制，12/31 晚餐強烈建議提前線上訂位；京都跨年夜氣溫常降至 0°C–3°C，排隊務必準備暖暖包與防風外套。"
+          "12/31 傍晚起東山・祇園周邊實施大規模交通管制，公車會改道或停駛；回程可步行 12 分鐘至地鐵烏丸線「四條站」搭 2 站直達京都站（跨年夜通宵行駛）。",
+          "日本除夕夜多數餐廳提早打烊或採預約制，12/31 晚餐強烈建議訂 18:00–18:30 於祇園或河原町周邊；京都跨年夜氣溫常降至 0°C–3°C，排隊務必準備暖暖包與防風外套。"
         ],
         todos: [
           { id: "d1-t1", text: "填寫 Visit Japan Web（入境審查與海關申報 QR Code 截圖）" },
           { id: "d1-t2", text: "購買／綁定日本交通 IC 卡（ICOCA / Suica Apple Pay 加值）" },
-          { id: "d1-t3", text: "預訂 12/31 祇園或河原町周邊跨年晚餐餐廳" }
+          { id: "d1-t3", text: "預訂 12/31 18:00–18:30 祇園或河原町周邊跨年晚餐餐廳" }
         ],
         timeline: [
           { time: "11:45", title: "抵達神戶機場（UKB）", desc: "星宇 JX834 落地，辦理入境與提領行李（約 45–60 分鐘）。", point: "ukb", transit: "Port Liner（18 分）→ 三宮站轉 JR 新快速（52 分）" },
           { time: "14:15", title: "抵達 VIA INN PRIME 京都站八條口寄放行李", desc: "至已預訂的 VIA INN PRIME 京都站八條口寄放行李，輕裝出發前往東山。", point: "kyotoHotel", transit: "市巴士 206 號或計程車（約 15–20 分）至五條坂" },
           { time: "15:15", title: "清水寺參拜", desc: "趁日落前參拜音羽山清水寺，於清水舞台遠眺京都盆地暮色（留意 12/31 閉門時間約 18:00）。", point: "kiyomizu", transit: "步行下坡約 6 分鐘" },
           { time: "16:30", title: "三年坂・二年坂・八坂之塔散步", desc: "漫步石板坡道町家老街，於法觀寺（八坂之塔）前捕捉藍調時刻經典街景。", point: "sannenzaka", transit: "沿寧寧之道步行約 12 分鐘" },
-          { time: "18:00", title: "花見小路・祇園晚餐", desc: "走訪古色古香的花見小路，並於已預約餐廳享用除夕晚餐（餐後可稍作休息保暖）。", point: "hanamikoji", transit: "步行約 10 分鐘前往知恩院排隊入口" },
+          { time: "18:00", title: "花見小路・祇園晚餐", desc: "走訪古色古香的花見小路，並於已預約餐廳享用除夕晚餐（餐後先上洗手間並補充熱飲保暖）。", point: "hanamikoji", transit: "步行約 8–10 分鐘前往知恩院排隊入口" },
           { time: "21:45", title: "知恩院除夜之鐘（先排隊觀禮撞鐘）", desc: "提早於 22:30 關閉入口前卡位！現場觀禮 17 名僧侶齊力敲響日本最大級大梵鐘 108 響。", point: "chionin", transit: "步行穿過圓山公園約 8 分鐘至八坂神社" },
-          { time: "23:15", title: "八坂神社「白朮祭」跨年祈福", desc: "24 小時開放！體驗旋轉祈福火繩「白朮詣」與熱鬧屋台市集，迎接 2027 新年第一刻後返回飯店。", point: "yasakaShrine", transit: "步行至京阪祇園四條站或搭計程車回京都站" }
+          { time: "23:15", title: "八坂神社「白朮祭」跨年祈福", desc: "24 小時開放！體驗旋轉祈福火繩「白朮詣」與熱鬧屋台市集，迎接 2027 新年第一刻後搭地鐵烏丸線回京都站。", point: "yasakaShrine", transit: "沿四條通步行 12 分至地鐵「四條站」→ 京都站（2 站）" }
         ]
       },
       {
@@ -758,7 +758,7 @@
         tabLabel: "Day 3",
         dateLabel: "1/2（六）",
         title: "移動日・清洲城 ➔ 名古屋城",
-        subtitle: "東海道新幹線 34 分直達名古屋 ➔ 計程車至名古屋錦日航都市飯店寄放行李 ➔ 清洲城 ➔ 名古屋城與本丸御殿",
+        subtitle: "東海道新幹線 HIKARI 702（10:07–10:42）直達名古屋 ➔ 錦日航飯店寄放行李 ➔ 清洲城 ➔ 金鯱橫丁午餐與名古屋城",
         city: "京都 → 名古屋",
         routeUrl: "https://www.google.com/maps/dir/?api=1&origin=Nagoya+Station&destination=Hotel+JAL+City+Nagoya+Nishiki&waypoints=Kiyosu+Castle|Nagoya+Castle&travelmode=transit",
         stops: ["kyotoHotel", "nagoyaSta", "nagoyaHotel", "kiyosuCastle", "nagoyaCastle", "esca"],
@@ -771,7 +771,7 @@
           spanLng: 0.088
         },
         overviewMap: {
-          title: "跨區移動：京都車站飯店 ➔（新幹線 34 分）➔ 名古屋錦日航都市飯店",
+          title: "跨區移動：京都車站飯店 ➔（新幹線 35 分）➔ 名古屋錦日航都市飯店",
           keys: ["kyotoHotel", "nagoyaSta", "nagoyaHotel", "kiyosuCastle", "nagoyaCastle"],
           centerLat: 35.09,
           centerLng: 136.32,
@@ -779,20 +779,20 @@
           spanLng: 1.32
         },
         warns: [
-          "1/2 為日本新年返鄉與出遊高峰（U-turn 潮），東海道新幹線（京都 → 名古屋）自由席易客滿，強烈建議提前透過 SmartEX 預訂指定席（攜帶大件行李請選「特大行李放置處附帶席」）。",
-          "抵達名古屋站後攜帶大件行李，直接於太閤通口或櫻通口搭乘計程車前往「名古屋錦日航都市飯店」（車程約 5 分鐘、約 ¥1,000），最省時省力。",
-          "清洲城 1/2 新年開館時間為 09:00–15:00，上午前往時間最充裕；名古屋城本丸御殿內部需脫鞋並寄放大型背包。"
+          "已於 SmartEX 完成 1/2「HIKARI 702（10:07 京都發 ➔ 10:42 名古屋著）」事前預約申請，將於 12/2（三）台灣時間早上 09:00 正式確定座位並扣款；收到確認信後請登入點選 Designate IC Card 綁定兩人的 17 碼 Suica 卡號。",
+          "清洲城 1/2 新年開館至 15:00（14:30 最後入館），抵達名古屋後務必「先去清洲城、下午再去名古屋城」（若想更省時，可先將大行李寄放在名站置物櫃直接轉名鐵去清洲城）。",
+          "名古屋城 16:00 停止入場、16:30 閉園，本丸御殿內部需脫鞋並寄放大型背包。"
         ],
         todos: [
-          { id: "d3-t1", text: "提前透過 SmartEX App 預訂 1/2 早上 京都→名古屋 新幹線指定席" }
+          { id: "d3-t1", text: "【12/2 早上 09:15 鬧鐘】確認 SmartEX HIKARI 702 座位確定通知，並綁定兩人 17 碼 Suica 卡號" }
         ],
         timeline: [
-          { time: "08:30", title: "退房並前往京都車站新幹線口", desc: "從 VIA INN PRIME 京都站八條口步行 2–3 分鐘至新幹線口，搭乘「のぞみ」或「ひかり」34 分鐘直達名古屋。", point: "kyotoHotel", transit: "東海道新幹線（34 分）→ 名古屋站" },
-          { time: "09:20", title: "抵達名古屋站 ➔ 搭計程車至名古屋錦日航都市飯店", desc: "抵達名古屋站後直接搭計程車約 5 分鐘（車資約 ¥1,000）至飯店寄放行李，輕裝出發。", point: "nagoyaHotel", transit: "步行 7 分至伏見站搭地鐵至名站，轉名鐵名古屋本線（7 分）→ 新清洲站" },
-          { time: "10:30", title: "清洲城（織田信長居城）", desc: "走過朱紅色大手橋登上清洲城天守閣，遙想桶狹間出陣歷史（1/2 新年開館至 15:00）。", point: "kiyosuCastle", transit: "步行回新清洲站搭名鐵回名站，轉地鐵名城線至「名古屋城站」" },
-          { time: "13:00", title: "金鯱橫丁午餐", desc: "於名古屋城正門旁的「金鯱橫丁（義直區）」品嚐矢場味噌豬排、山本屋煮烏龍或名古屋交趾雞親子丼。", point: "nagoyaCastle", transit: "緊鄰名古屋城正門" },
-          { time: "14:15", title: "名古屋城・本丸御殿", desc: "參觀耗時十年復原、極盡奢華的金箔障壁畫「本丸御殿」，並欣賞天守閣屋頂耀眼的金鯱。", point: "nagoyaCastle", transit: "地鐵名城線「名古屋城站」→「榮站」轉東山線至「伏見站」步行 7 分" },
-          { time: "17:30", title: "名古屋錦日航都市飯店辦理入住・周邊晚餐", desc: "辦理正式入住享受 22㎡ 以上寬敞房型，晚上可於飯店周邊（伏見／榮／名站）大啖名古屋手羽先與味噌豬排。", point: "esca" }
+          { time: "09:40", title: "退房並前往京都車站新幹線口", desc: "從 VIA INN PRIME 京都站八條口步行 2–3 分鐘至新幹線口，持已綁定車票的 iPhone Suica 感應進站。", point: "kyotoHotel", transit: "東海道新幹線 HIKARI 702（10:07 發 ➔ 10:42 著，35 分直達）" },
+          { time: "10:42", title: "抵達名古屋站 ➔ 寄放行李後出發清洲城", desc: "搭計程車約 5 分鐘至名古屋錦日航都市飯店寄放行李（或先鎖名站置物櫃更省 35 分鐘），隨即搭名鐵前往清洲城。", point: "nagoyaHotel", transit: "名鐵名古屋本線（7 分）→ 新清洲站，步行約 15 分" },
+          { time: "11:45", title: "清洲城（織田信長居城）", desc: "走過朱紅色大手橋登上清洲城天守閣，遙想桶狹間出陣歷史（1/2 新年開館至 15:00，建議停留約 1 小時 15 分）。", point: "kiyosuCastle", transit: "步行回新清洲站搭名鐵回名站，轉地鐵名城線至「名古屋城站」" },
+          { time: "14:00", title: "金鯱橫丁午餐", desc: "避開 12–13 點尖峰人潮，於名古屋城正門旁「金鯱橫丁（義直區）」品嚐矢場味噌豬排、山本屋煮烏龍或親子丼。", point: "nagoyaCastle", transit: "緊鄰名古屋城正門" },
+          { time: "15:00", title: "名古屋城・本丸御殿", desc: "於 16:00 停止入場前進入，參觀極盡奢華的金箔障壁畫「本丸御殿」，並欣賞天守閣屋頂耀眼的金鯱。", point: "nagoyaCastle", transit: "地鐵名城線「名古屋城站」→「榮站」轉東山線至「伏見站」步行 7 分" },
+          { time: "17:15", title: "名古屋錦日航都市飯店辦理入住・周邊晚餐", desc: "辦理正式入住享受 22㎡ 以上寬敞房型，晚上可於飯店周邊（伏見／榮／名站）大啖名古屋手羽先與味噌豬排。", point: "esca" }
         ]
       },
       {
@@ -841,7 +841,7 @@
         tabLabel: "Day 5",
         dateLabel: "1/4（一）",
         title: "樂高樂園＋磁浮鐵道館",
-        subtitle: "青波線直達金城埠頭 ➔ 日本樂高樂園暢玩主題園區與迷你樂園 ➔ 磁浮・鐵道館看超導磁浮與歷代新幹線",
+        subtitle: "青波線直達金城埠頭 ➔ 日本樂高樂園（已購票 ✅）暢玩主題園區與迷你樂園 ➔ 磁浮・鐵道館看超導磁浮與歷代新幹線",
         city: "名古屋・金城埠頭",
         routeUrl: "https://www.google.com/maps/dir/?api=1&origin=Nagoya+Station&destination=SCMAGLEV+and+Railway+Park&waypoints=LEGOLAND+Japan|Makers+Pier+Nagoya&travelmode=transit",
         stops: ["nagoyaHotel", "nagoyaSta", "legoland", "makersPier", "scmaglev", "midlandSquare"],
@@ -866,14 +866,14 @@
           "磁浮・鐵道館最後入館時間為 17:00（17:30 閉館），請務必最晚 14:30–15:00 前從樂高樂園移動過去，才能留足 2.5 小時參觀。"
         ],
         todos: [
-          { id: "d5-t1", text: "事先線上購買日本樂高樂園（LEGOLAND Japan）指定日門票（享早鳥優惠）" },
+          { id: "d5-t1", text: "✅ 已完成購買日本樂高樂園（LEGOLAND Japan）指定日門票（記得存好電子憑證 QR Code）" },
           { id: "d5-t2", text: "下載 LEGOLAND Japan 官方 App 查看設施排隊時間與園區地圖" }
         ],
         timeline: [
           { time: "08:55", title: "飯店出發 ➔ 名古屋站轉乘青波線（Aonami Line）", desc: "從名古屋錦日航都市飯店步行至伏見站搭地鐵 1 站至名古屋站，轉乘青波線直達列車（約 24 分鐘）前往終點「金城埠頭站」。", point: "nagoyaSta", transit: "地鐵伏見站 → 名站轉青波線（24 分）→ 金城埠頭站，步行 5 分" },
-          { time: "10:00", title: "日本樂高樂園（LEGOLAND Japan）", desc: "開園入內！必玩潛水艇冒險（Submarine Adventure）、飛龍雲霄飛車、觀景塔以及用千萬顆積木打造的「Miniland 日本名勝」。", point: "legoland", transit: "緊鄰樂園出口" },
+          { time: "10:00", title: "日本樂高樂園（已購票 ✅）", desc: "持已購買的電子門票直接掃碼入園！必玩潛水艇冒險（Submarine Adventure）、飛龍雲霄飛車、觀景塔以及千萬顆積木打造的「Miniland 日本名勝」。", point: "legoland", transit: "緊鄰樂園出口" },
           { time: "13:00", title: "Maker's Pier 午餐", desc: "可於樂高樂園內餐廳或緊鄰的 Maker's Pier 享用漢堡、拉麵或名古屋特色料理（當日再入園需蓋手章）。", point: "makersPier", transit: "步行約 6 分鐘（穿過金城埠頭站前廣場）" },
-          { time: "14:45", title: "磁浮・鐵道館（SCMAGLEV & Railway Park）", desc: "近距離觀賞時速破 600 公里的超導磁浮列車 L0 系、歷代東海道新幹線與日本最大級 HO 規鐵道模型秀。", point: "scmaglev", transit: "金城埠頭站搭青波線（24 分）返回名古屋站" },
+          { time: "14:45", title: "磁浮・鐵道館（SCMAGLEV & Railway Park）", desc: "近距離觀賞時速破 600 公里的超導磁浮列車 L0 系、歷代東海道新幹線與日本最大級 HO 規鐵道模型秀（現場購票即可）。", point: "scmaglev", transit: "金城埠頭站搭青波線（24 分）返回名古屋站" },
           { time: "18:00", title: "Midland Square / 名站周邊晚餐與藥妝採買", desc: "返回名古屋站，可登上 Midland Square 44–46F 露天展望台賞夜景，並於高島屋或千里馬藥局補齊藥妝伴手禮後回飯店。", point: "midlandSquare", transit: "地鐵名站 → 伏見站 1 站，步行 7 分回名古屋錦日航都市飯店" }
         ]
       },
@@ -908,7 +908,7 @@
         ],
         todos: [
           { id: "d6-t1", text: "前晚完成行李打包與秤重，確認液體與行動電源隨身規定" },
-          { id: "d6-t2", text: "1/5 早上於名鐵名古屋站購買「μ-SKY」指定席車票（確保大件行李有座位）" }
+          { id: "d6-t2", text: "於名鐵官網或 1/2 抵達名古屋站時預購 1/5「μ-SKY」特別車輛指定席券" }
         ],
         timeline: [
           { time: "08:45", title: "名古屋錦日航都市飯店退房 ➔ 計程車至名站寄放行李", desc: "辦理退房後直接搭計程車約 5 分鐘至名古屋車站，將大件行李寄放於車站置物櫃，輕裝出發。", point: "nagoyaHotel", transit: "計程車約 5 分鐘至名站寄物 → 轉名鐵名古屋本線（2 分）至榮生站，步行 3 分" },
@@ -964,14 +964,16 @@
      * 2. 狀態管理與 localStorage（行前清單勾選狀態、目前分頁、高亮地點）
      * ============================================================================
      */
-    const STORAGE_KEY = "kyoto_nagoya_trip_todos_v2";
-    let todoState = {};
+    const STORAGE_KEY = "kyoto_nagoya_trip_todos_v3";
+    let todoState = {
+      "d5-t1": true // 樂高樂園門票已完成購買
+    };
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) todoState = JSON.parse(saved);
-    } catch (e) {
-      todoState = {};
-    }
+      if (saved) {
+        todoState = { ...todoState, ...JSON.parse(saved) };
+      }
+    } catch (e) {}
 
     function saveTodoState() {
       try {
@@ -1217,14 +1219,14 @@
             <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
               <span class="text-xs font-bold tracking-wider uppercase text-[#b4332b]">2026–2027 WINTER NEW YEAR ITINERARY</span>
               <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-[#f7f1e3] text-[#a67c2e] border border-[#e8dcc2]">
-                京都 2 晚 ＋ 名古屋 3 晚（住宿皆已預訂）
+                機票・飯店・樂高樂園已訂 ✅｜新幹線 12/2 確認座位
               </span>
             </div>
             <h2 class="font-serif-tc text-xl sm:text-2xl font-bold text-[#2a2622]">
               跨越關西古都與中部名城的 6 日跨年之旅
             </h2>
             <p class="text-sm text-[#6e675f] mt-1.5">
-              12/31 星宇航空飛抵神戶直奔京都東山跨年（知恩院撞鐘＋八坂神社白朮祭）、元旦漫遊天龍寺、嵐山竹林與金閣寺；1/2 搭乘東海道新幹線轉往名古屋入住錦日航都市飯店，走訪清洲城、名古屋城、熱田神宮初詣、樂高樂園、磁浮鐵道館與豐田產業技術紀念館。
+              12/31 星宇航空飛抵神戶直奔京都東山跨年（知恩院撞鐘＋八坂神社白朮祭）、元旦漫遊天龍寺、嵐山竹林與金閣寺；1/2 搭乘東海道新幹線（HIKARI 702）轉往名古屋入住錦日航都市飯店，走訪清洲城、名古屋城、熱田神宮初詣、樂高樂園（已購票）、磁浮鐵道館與豐田產業技術紀念館。
             </p>
           </section>
 
